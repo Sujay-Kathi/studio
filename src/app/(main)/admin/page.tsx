@@ -1,8 +1,19 @@
+'use client';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CreateEventForm } from "@/components/admin/create-event-form";
 import { SendAnnouncementForm } from "@/components/admin/send-announcement-form";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function AdminPage() {
+  const router = useRouter();
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem('isAdminLoggedIn');
+    if (isLoggedIn !== 'true') {
+      router.replace('/login/admin');
+    }
+  }, [router]);
+
   return (
     <div className="p-4">
       <Tabs defaultValue="create-event">

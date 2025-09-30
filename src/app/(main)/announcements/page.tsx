@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { announcements } from '@/lib/data';
+import { getAnnouncements } from '@/lib/data';
 import { format } from 'date-fns';
 import { UserCircle } from 'lucide-react';
 
-export default function AnnouncementsPage() {
-    const sortedAnnouncements = [...announcements].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+export default async function AnnouncementsPage() {
+    const sortedAnnouncements = await getAnnouncements();
   
   return (
     <div className="p-4 space-y-4">

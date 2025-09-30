@@ -13,9 +13,10 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, UserCircle } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { residents } from '@/lib/data';
+import { updateResident } from '@/lib/actions';
 
 const profileSchema = z.object({
+  id: z.string(),
   name: z.string().min(2, 'Name must be at least 2 characters'),
   flatNo: z.string().min(1, 'Flat number is required'),
   phone: z.string(),
@@ -34,6 +35,7 @@ export default function EditProfilePage() {
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
+      id: '',
       name: '',
       flatNo: '',
       phone: '',
@@ -42,13 +44,14 @@ export default function EditProfilePage() {
   });
 
   useEffect(() => {
+    const id = localStorage.getItem('userId');
     const name = localStorage.getItem('userName');
     const flatNo = localStorage.getItem('userFlatNo');
     const phone = localStorage.getItem('userPhone');
     const avatar = localStorage.getItem('userAvatar');
 
-    if (name && flatNo && phone) {
-      form.reset({ name, flatNo, phone, avatar: avatar || '' });
+    if (id && name && flatNo && phone) {
+      form.reset({ id, name, flatNo, phone, avatar: avatar || '' });
       if (avatar) {
         setAvatarPreview(avatar);
       }
@@ -71,34 +74,43 @@ export default function EditProfilePage() {
 
   async function onSubmit(data: ProfileFormValues) {
     setIsSaving(true);
-    // This is a mock save. In a real app, you'd call an API.
-    setTimeout(() => {
-      const resident = residents.find(r => r.phone === data.phone);
-      if (resident) {
-        resident.name = data.name;
-        resident.flatNo = data.flatNo;
-        resident.avatar = data.avatar;
-      }
-
-      // Update localStorage
-      localStorage.setItem('userName', data.name);
-      localStorage.setItem('userFlatNo', data.flatNo);
-      if (data.avatar) {
-        localStorage.setItem('userAvatar', data.avatar);
-      } else {
-        localStorage.removeItem('userAvatar');
-      }
-
-      // Dispatch a custom event to notify other components (like the header) of the change
-      window.dispatchEvent(new CustomEvent('profileUpdated'));
-
-      setIsSaving(false);
-      toast({
-        title: 'Profile Updated',
-        description: 'Your details have been saved successfully.',
+    try {
+      const result = await updateResident(data.id, {
+        name: data.name,
+        flatNo: data.flatNo,
+        avatar: data.avatar,
       });
-      router.back();
-    }, 1000);
+
+      if (result.success) {
+        // Update localStorage
+        localStorage.setItem('userName', data.name);
+        localStorage.setItem('userFlatNo', data.flatNo);
+        if (data.avatar) {
+          localStorage.setItem('userAvatar', data.avatar);
+        } else {
+          localStorage.removeItem('userAvatar');
+        }
+
+        // Dispatch a custom event to notify other components (like the header) of the change
+        window.dispatchEvent(new CustomEvent('profileUpdated'));
+
+        toast({
+          title: 'Profile Updated',
+          description: 'Your details have been saved successfully.',
+        });
+        router.back();
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Update Failed',
+        description: error.message || 'An unexpected error occurred.',
+      });
+    } finally {
+      setIsSaving(false);
+    }
   }
   
   if (isLoading) {

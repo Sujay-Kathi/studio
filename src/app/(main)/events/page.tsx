@@ -3,16 +3,15 @@ import Image from 'next/image';
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { events } from '@/lib/data';
+import { getEvents } from '@/lib/data';
 import { format } from 'date-fns';
 
-export default function EventsPage() {
-  const sortedEvents = [...events].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+export default async function EventsPage() {
+  const sortedEvents = await getEvents();
   
   return (
     <div className="p-4 space-y-4">

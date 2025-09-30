@@ -7,32 +7,46 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { residents } from '@/lib/data';
+import { getResidentByPhone } from '@/lib/data';
+import { Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [phone, setPhone] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleUserLogin = () => {
-    const resident = residents.find((r) => r.phone === phone.trim());
-    if (resident) {
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userName', resident.name);
-      localStorage.setItem('userFlatNo', resident.flatNo);
-      localStorage.setItem('userPhone', resident.phone);
-       if (resident.avatar) {
-        localStorage.setItem('userAvatar', resident.avatar);
+  const handleUserLogin = async () => {
+    setIsLoading(true);
+    try {
+      const resident = await getResidentByPhone(phone.trim());
+      if (resident) {
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userId', resident.id);
+        localStorage.setItem('userName', resident.name);
+        localStorage.setItem('userFlatNo', resident.flatNo);
+        localStorage.setItem('userPhone', resident.phone);
+        if (resident.avatar) {
+          localStorage.setItem('userAvatar', resident.avatar);
+        } else {
+          localStorage.removeItem('userAvatar');
+        }
+        router.replace('/home');
       } else {
-        localStorage.removeItem('userAvatar');
+        toast({
+          variant: 'destructive',
+          title: 'Login Failed',
+          description: 'This phone number is not registered. Please contact administration.',
+        });
       }
-      router.replace('/home');
-    } else {
-      toast({
+    } catch (error) {
+       toast({
         variant: 'destructive',
-        title: 'Login Failed',
-        description: 'This phone number is not registered. Please contact administration.',
+        title: 'Login Error',
+        description: 'An error occurred during login. Please try again.',
       });
+    } finally {
+        setIsLoading(false);
     }
   };
 
@@ -60,13 +74,16 @@ export default function LoginPage() {
               placeholder="Your 10-digit phone number" 
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
+              disabled={isLoading}
             />
           </div>
           <Button
               onClick={handleUserLogin}
+              disabled={isLoading}
               className="w-full bg-primary text-primary-foreground font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out h-auto text-base"
           >
-              Login as User
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isLoading ? 'Logging in...' : 'Login as User'}
           </Button>
           <Button
               onClick={handleAdminLoginClick}

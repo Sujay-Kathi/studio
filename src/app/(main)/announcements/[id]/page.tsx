@@ -1,15 +1,16 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
-import { announcements } from '@/lib/data';
+import { getAnnouncementById } from '@/lib/data';
 import { Calendar, Clock, UserCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
+import type { Announcement } from '@/lib/types';
 
 type AnnouncementDetailPageProps = {
   params: { id: string };
 };
 
-const TimingInfo = ({ timing }: { timing: NonNullable<typeof announcements[0]['timing']> }) => {
+const TimingInfo = ({ timing }: { timing: NonNullable<Announcement['timing']> }) => {
     if (timing.eta) {
         return <Badge variant="outline">ETA: {timing.eta}</Badge>;
     }
@@ -19,8 +20,8 @@ const TimingInfo = ({ timing }: { timing: NonNullable<typeof announcements[0]['t
     return null;
 }
 
-export default function AnnouncementDetailPage({ params }: AnnouncementDetailPageProps) {
-  const announcement = announcements.find((a) => a.id === params.id);
+export default async function AnnouncementDetailPage({ params }: AnnouncementDetailPageProps) {
+  const announcement = await getAnnouncementById(params.id);
 
   if (!announcement) {
     notFound();

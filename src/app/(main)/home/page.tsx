@@ -13,13 +13,15 @@ import {
   Megaphone,
   Siren,
 } from 'lucide-react';
-import { events, announcements } from '@/lib/data';
-import { Badge } from '@/components/ui/badge';
+import { getEvents, getAnnouncements } from '@/lib/data';
 import { format } from 'date-fns';
 
-export default function HomePage() {
-  const upcomingEvent = [...events].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
-  const latestAnnouncement = [...announcements].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+export default async function HomePage() {
+  const upcomingEvents = await getEvents();
+  const latestAnnouncements = await getAnnouncements();
+
+  const upcomingEvent = upcomingEvents[0];
+  const latestAnnouncement = latestAnnouncements[0];
 
   return (
     <div className="space-y-6 p-4">

@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
-import { events } from '@/lib/data';
+import { getEventById } from '@/lib/data';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import {
@@ -17,8 +17,8 @@ type EventDetailPageProps = {
   params: { id: string };
 };
 
-export default function EventDetailPage({ params }: EventDetailPageProps) {
-  const event = events.find((e) => e.id === params.id);
+export default async function EventDetailPage({ params }: EventDetailPageProps) {
+  const event = await getEventById(params.id);
 
   if (!event) {
     notFound();

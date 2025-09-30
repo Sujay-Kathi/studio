@@ -1,42 +1,62 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { events, announcements } from './data';
+import { db } from '@/firebase/config';
+import { collection, addDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import type { Event, Announcement } from './types';
 
-// NOTE: This is a mock implementation. In a real application,
-// this would interact with a database. Changes are not persistent
-// and will be lost on server restart.
+// NOTE: This implementation now interacts with Firestore.
 
 export async function addEvent(eventData: Omit<Event, 'id' | 'image' | 'imageHint' | 'participants'>) {
-  const newId = (Math.max(...events.map(e => parseInt(e.id))) + 1).toString();
-  const newEvent: Event = {
-    ...eventData,
-    id: newId,
-    // Using a placeholder for the image for now
-    image: `https://picsum.photos/seed/${newId}/800/600`,
-    imageHint: 'new event',
-    participants: 0,
-    priority: eventData.priority,
-  };
-  events.push(newEvent);
-  revalidatePath('/events');
-  revalidatePath('/home');
-  return { success: true, event: newEvent };
+  try {
+    const newEventData = {
+      ...eventData,
+      // Using a placeholder for the image for now
+      image: `https://picsum.photos/seed/${Math.random()}/800/600`,
+      imageHint: 'new event',
+      participants: 0,
+      priority: eventData.priority,
+      createdAt: serverTimestamp(),
+    };
+    const docRef = await addDoc(collection(db, "events"), newEventData);
+    
+    revalidatePath('/events');
+    revalidatePath('/home');
+    return { success: true, eventId: docRef.id };
+  } catch (error: any) {
+    console.error("Error adding event: ", error);
+    return { success: false, error: error.message };
+  }
 }
 
 export async function addAnnouncement(announcementData: Omit<Announcement, 'id' | 'image' | 'imageHint' | 'date'>) {
-  const newId = (Math.max(...announcements.map(a => parseInt(a.id))) + 1).toString();
-  const newAnnouncement: Announcement = {
-    ...announcementData,
-    id: newId,
-    date: new Date().toISOString(),
-    // Using a placeholder for the image for now
-    image: `https://picsum.photos/seed/announcement-${newId}/800/600`,
-    imageHint: 'new announcement',
-  };
-  announcements.unshift(newAnnouncement);
-  revalidatePath('/announcements');
-  revalidatePath('/home');
-  return { success: true, announcement: newAnnouncement };
+    try {
+        const newAnnouncementData = {
+            ...announcementData,
+            date: new Date().toISOString(),
+            image: `https://picsum.photos/seed/announcement-${Math.random()}/800/600`,
+            imageHint: 'new announcement',
+        };
+        const docRef = await addDoc(collection(db, "announcements"), newAnnouncementData);
+        
+        revalidatePath('/announcements');
+        revalidatePath('/home');
+        return { success: true, announcementId: docRef.id };
+    } catch (error: any) {
+        console.error("Error adding announcement: ", error);
+        return { success: false, error: error.message };
+    }
+}
+
+
+export async function updateResident(id: string, data: Partial<{ name: string; flatNo: string; avatar?: string }>) {
+  try {
+    const residentDoc = doc(db, 'residents', id);
+    await updateDoc(residentDoc, data);
+    revalidatePath(`/profile/edit`); // Revalidate if needed, though this is a client page
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error updating resident: ", error);
+    return { success: false, error: error.message };
+  }
 }

@@ -13,8 +13,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, UserCircle } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { getFirestore, doc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore';
-import { app } from '@/firebase/config';
+import { residents } from '@/lib/data';
 
 const profileSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -72,55 +71,34 @@ export default function EditProfilePage() {
 
   async function onSubmit(data: ProfileFormValues) {
     setIsSaving(true);
-    try {
-        const db = getFirestore(app);
-        const residentsCol = collection(db, 'residents');
-        const q = query(residentsCol, where('phone', '==', data.phone));
-        const querySnapshot = await getDocs(q);
+    // This is a mock save. In a real app, you'd call an API.
+    setTimeout(() => {
+      const resident = residents.find(r => r.phone === data.phone);
+      if (resident) {
+        resident.name = data.name;
+        resident.flatNo = data.flatNo;
+        resident.avatar = data.avatar;
+      }
 
-        if (!querySnapshot.empty) {
-            const residentDocRef = querySnapshot.docs[0].ref;
-            await updateDoc(residentDocRef, {
-                name: data.name,
-                flatNo: data.flatNo,
-                avatar: data.avatar || '',
-            });
+      // Update localStorage
+      localStorage.setItem('userName', data.name);
+      localStorage.setItem('userFlatNo', data.flatNo);
+      if (data.avatar) {
+        localStorage.setItem('userAvatar', data.avatar);
+      } else {
+        localStorage.removeItem('userAvatar');
+      }
 
-             // Update localStorage
-            localStorage.setItem('userName', data.name);
-            localStorage.setItem('userFlatNo', data.flatNo);
-            if (data.avatar) {
-                localStorage.setItem('userAvatar', data.avatar);
-            } else {
-                localStorage.removeItem('userAvatar');
-            }
+      // Dispatch a custom event to notify other components (like the header) of the change
+      window.dispatchEvent(new CustomEvent('profileUpdated'));
 
-            // Dispatch a custom event to notify other components (like the header) of the change
-            window.dispatchEvent(new CustomEvent('profileUpdated'));
-
-            toast({
-                title: 'Profile Updated',
-                description: 'Your details have been saved successfully.',
-            });
-            router.back();
-
-        } else {
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: 'Could not find your profile to update.',
-            });
-        }
-    } catch(error) {
-        console.error("Error updating profile:", error);
-        toast({
-            variant: 'destructive',
-            title: 'Update Failed',
-            description: 'An error occurred while saving your profile.',
-        });
-    } finally {
-        setIsSaving(false);
-    }
+      setIsSaving(false);
+      toast({
+        title: 'Profile Updated',
+        description: 'Your details have been saved successfully.',
+      });
+      router.back();
+    }, 1000);
   }
   
   if (isLoading) {

@@ -7,65 +7,32 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { app } from '@/firebase/config';
-import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
-import type { Resident } from '@/lib/types';
-
+import { residents } from '@/lib/data';
 
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [phone, setPhone] = useState('');
-  const [loading, setLoading] = useState(false);
 
-  const handleUserLogin = async () => {
-    if (phone.trim() === '') {
+  const handleUserLogin = () => {
+    const resident = residents.find((r) => r.phone === phone.trim());
+    if (resident) {
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userName', resident.name);
+      localStorage.setItem('userFlatNo', resident.flatNo);
+      localStorage.setItem('userPhone', resident.phone);
+       if (resident.avatar) {
+        localStorage.setItem('userAvatar', resident.avatar);
+      } else {
+        localStorage.removeItem('userAvatar');
+      }
+      router.replace('/home');
+    } else {
       toast({
         variant: 'destructive',
         title: 'Login Failed',
-        description: 'Please enter your phone number.',
+        description: 'This phone number is not registered. Please contact administration.',
       });
-      return;
-    }
-
-    setLoading(true);
-    
-    try {
-      const db = getFirestore(app);
-      const residentsCol = collection(db, 'residents');
-      const q = query(residentsCol, where('phone', '==', phone.trim()));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        const residentDoc = querySnapshot.docs[0];
-        const resident = { id: residentDoc.id, ...residentDoc.data() } as Resident;
-
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userName', resident.name);
-        localStorage.setItem('userFlatNo', resident.flatNo);
-        localStorage.setItem('userPhone', resident.phone);
-        if (resident.avatar) {
-          localStorage.setItem('userAvatar', resident.avatar);
-        } else {
-            localStorage.removeItem('userAvatar');
-        }
-        router.replace('/home');
-      } else {
-        toast({
-          variant: 'destructive',
-          title: 'Login Failed',
-          description: 'This phone number is not registered. Please contact administration.',
-        });
-      }
-    } catch (error) {
-        console.error("Error logging in:", error);
-        toast({
-            variant: 'destructive',
-            title: 'Error',
-            description: 'An error occurred while trying to log in. Please try again.',
-        });
-    } finally {
-        setLoading(false);
     }
   };
 
@@ -93,15 +60,13 @@ export default function LoginPage() {
               placeholder="Your 10-digit phone number" 
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              disabled={loading}
             />
           </div>
           <Button
               onClick={handleUserLogin}
-              disabled={loading}
               className="w-full bg-primary text-primary-foreground font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out h-auto text-base"
           >
-              {loading ? 'Logging in...' : 'Login as User'}
+              Login as User
           </Button>
           <Button
               onClick={handleAdminLoginClick}

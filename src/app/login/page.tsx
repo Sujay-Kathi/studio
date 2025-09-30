@@ -3,50 +3,51 @@
 import { useRouter } from 'next/navigation';
 import { SparkIcon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
 export default function LoginPage() {
   const router = useRouter();
 
   const handleLogin = () => {
     // In a real app, this would involve authentication.
-    // Here, we just set a flag in localStorage for demo purposes.
+    // For now, we just navigate to the home page.
     localStorage.setItem('isLoggedIn', 'true');
     router.replace('/home');
   };
 
+  const handleAdminLogin = () => {
+    // In a real app, this would involve authentication.
+    // For now, we just navigate to the admin page.
+    localStorage.setItem('isLoggedIn', 'true');
+    router.replace('/admin');
+  };
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-muted/40 px-4">
-      <div className="w-full max-w-sm">
-        <div className="mb-8 flex flex-col items-center text-center">
-          <SparkIcon className="h-20 w-20 text-primary" />
-          <h1 className="mt-4 font-headline text-3xl font-bold">Welcome to Rajsri SPARK</h1>
-          <p className="mt-1 text-muted-foreground">Sign in to connect with your community</p>
+    <div className="flex h-screen flex-col font-display text-gray-800 dark:text-gray-200">
+      <header className="flex-shrink-0 flex justify-center items-center pt-24 pb-12">
+        <div className="text-center">
+          <div className="inline-block p-4 bg-white dark:bg-card rounded-xl shadow-lg">
+            <SparkIcon className="h-16 w-16 text-primary" />
+          </div>
+          <h1 className="font-headline text-4xl font-bold mt-4 text-gray-900 dark:text-white">Rajsri SPARK</h1>
         </div>
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-center font-headline text-2xl">Access Your Community</CardTitle>
-            <CardDescription className="text-center">Enter your credentials below to enter the app.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="me@example.com" required />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" required />
-              </div>
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
-                Enter Rajsri SPARK
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
+      </header>
+      <main className="flex-grow flex flex-col items-center justify-center px-6 space-y-4">
+        <Button
+            onClick={handleLogin}
+            className="w-full max-w-xs bg-primary text-gray-900 dark:text-gray-900 font-bold py-4 px-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out h-auto text-base"
+        >
+            Login
+        </Button>
+        <Button
+            onClick={handleAdminLogin}
+            className="w-full max-w-xs bg-secondary text-gray-900 dark:text-gray-900 font-bold py-4 px-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out h-auto text-base"
+        >
+            Admin Login
+        </Button>
+      </main>
+      <footer className="flex-shrink-0 pb-8">
+        <p className="text-center text-sm text-gray-500 dark:text-gray-400">Powered by Rajsri</p>
+      </footer>
     </div>
   );
 }

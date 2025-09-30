@@ -22,7 +22,7 @@ export default function LoginPage() {
 
   const handleAdminLogin = () => {
     // Hardcoded credentials for admin for now
-    if (email === 'admin' && password === 'password') {
+    if (email === 'admin' && password === '1234') {
       localStorage.setItem('isLoggedIn', 'true');
       router.replace('/admin');
     } else {
@@ -51,7 +51,7 @@ export default function LoginPage() {
             <Input 
               type="text" 
               id="email" 
-              placeholder="admin" 
+              placeholder="Username" 
               value={email}
               onChange={(e) => setEmail(e.target.value)} 
             />
@@ -61,7 +61,7 @@ export default function LoginPage() {
             <Input 
               type="password" 
               id="password" 
-              placeholder="password"
+              placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />

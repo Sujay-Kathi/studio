@@ -3,16 +3,29 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CreateEventForm } from "@/components/admin/create-event-form";
 import { SendAnnouncementForm } from "@/components/admin/send-announcement-form";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 
 export default function AdminPage() {
   const router = useRouter();
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('isAdminLoggedIn');
     if (isLoggedIn !== 'true') {
       router.replace('/login/admin');
+    } else {
+      setIsCheckingAuth(false);
     }
   }, [router]);
+
+  if (isCheckingAuth) {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="p-4">

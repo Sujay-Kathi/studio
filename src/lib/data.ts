@@ -1,3 +1,4 @@
+
 import type { Event, Announcement, EmergencyContact, VolunteerService, Resident } from './types';
 import { Shield, Siren, Ambulance, Check, Droplets, Wrench, Package } from 'lucide-react';
 import { PlaceHolderImages } from './placeholder-images';

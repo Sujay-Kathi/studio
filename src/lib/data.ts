@@ -1,9 +1,15 @@
-import type { Event, Announcement, EmergencyContact, VolunteerService } from './types';
+import type { Event, Announcement, EmergencyContact, VolunteerService, Resident } from './types';
 import { Shield, Siren, Ambulance, Check, Droplets, Wrench, Package } from 'lucide-react';
 import { PlaceHolderImages } from './placeholder-images';
 
 const findImage = (id: string) => PlaceHolderImages.find(img => img.id === id)?.imageUrl || `https://picsum.photos/seed/${id}/800/600`;
 const findImageHint = (id: string) => PlaceHolderImages.find(img => img.id === id)?.imageHint || `image`;
+
+export const residents: Resident[] = [
+    { id: '1', name: 'Arjun Sharma', flatNo: 'A-101' },
+    { id: '2', name: 'Priya Patel', flatNo: 'B-204' },
+    { id: '3', name: 'Rohan Mehta', flatNo: 'C-302' },
+];
 
 export const events: Event[] = [
   {

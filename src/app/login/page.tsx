@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { residents } from '@/lib/data';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -23,10 +24,28 @@ export default function LoginPage() {
       });
       return;
     }
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('userName', name);
-    localStorage.setItem('userFlatNo', flatNo);
-    router.replace('/home');
+
+    const normalizedName = name.trim().toLowerCase();
+    const normalizedFlatNo = flatNo.trim().toLowerCase();
+
+    const resident = residents.find(
+      (r) =>
+        r.name.toLowerCase() === normalizedName &&
+        r.flatNo.toLowerCase() === normalizedFlatNo
+    );
+
+    if (resident) {
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userName', resident.name);
+      localStorage.setItem('userFlatNo', resident.flatNo);
+      router.replace('/home');
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'Login Failed',
+        description: 'No resident found with that name and flat number.',
+      });
+    }
   };
 
   const handleAdminLoginClick = () => {

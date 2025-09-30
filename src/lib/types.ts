@@ -46,3 +46,9 @@ export interface VolunteerService {
   name: string;
   description: string;
 }
+
+export interface Resident {
+  id: string;
+  name: string;
+  flatNo: string;
+}

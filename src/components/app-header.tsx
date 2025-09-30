@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { ArrowLeft, User, UserCog } from 'lucide-react';
+import { ArrowLeft, User, UserCog, LogOut } from 'lucide-react';
 import { ThemeToggle } from './theme-toggle';
 import { Button } from './ui/button';
 import type { Screen } from '@/lib/types';
@@ -25,6 +25,16 @@ export default function AppHeader() {
   const [userPhone, setUserPhone] = useState<string | null>(null);
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const [userInitial, setUserInitial] = useState('');
+
+  const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('isAdminLoggedIn');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userFlatNo');
+    localStorage.removeItem('userPhone');
+    localStorage.removeItem('userAvatar');
+    router.replace('/login');
+  };
 
   useEffect(() => {
     // This function can be called to re-fetch data from localStorage
@@ -124,6 +134,11 @@ export default function AppHeader() {
                 </DropdownMenuItem>
                 <DropdownMenuItem disabled>
                   {userPhone ? `Phone: ${userPhone}`: 'Phone No. not found'}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+                  <LogOut className="h-4 w-4" />
+                  <span>Log Out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

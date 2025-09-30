@@ -45,8 +45,10 @@ export default function AppHeader() {
     updateUserData();
 
     // Listen for storage changes to update the header if profile is edited
-    const handleStorageChange = () => {
-      updateUserData();
+    const handleStorageChange = (e: StorageEvent) => {
+       if (e.key === 'userName' || e.key === 'userAvatar') {
+            updateUserData();
+       }
     };
 
     window.addEventListener('storage', handleStorageChange);

@@ -86,6 +86,9 @@ export default function EditProfilePage() {
       }
     }
 
+    // Dispatch a custom event to notify other components (like the header) of the change
+    window.dispatchEvent(new CustomEvent('profileUpdated'));
+
     toast({
       title: 'Profile Updated',
       description: 'Your details have been saved successfully.',

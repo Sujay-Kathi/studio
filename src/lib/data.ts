@@ -8,7 +8,7 @@ const findImageHint = (id: string) => PlaceHolderImages.find(img => img.id === i
 export const residents: Resident[] = [
     { id: '1', name: 'Arjun Sharma', flatNo: 'A-101', phone: '9876543210' },
     { id: '2', name: 'Priya Patel', flatNo: 'B-204', phone: '9876543211' },
-    { id: '3', name: 'anish vaidyam', flatNo: 'b-303', phone: '9380502703' },
+    { id: '3', name: 'ASHISH', flatNo: 'b-303', phone: '9380502703' },
     { id: '4', name: 'sujay', flatNo: 'a704', phone: '8618642639' },
 ];
 

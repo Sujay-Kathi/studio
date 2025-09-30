@@ -9,6 +9,8 @@ export default function MorePage() {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
+    // This check ensures that the code only runs on the client-side,
+    // where localStorage is available.
     const isAdminLoggedIn = localStorage.getItem('isAdminLoggedIn') === 'true';
     setIsAdmin(isAdminLoggedIn);
   }, []);

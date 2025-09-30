@@ -1,16 +1,25 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { SparkIcon } from '@/components/icons';
 
 export default function SplashPage() {
   const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
 
   useEffect(() => {
+    // This check needs to be in useEffect to run on the client only
+    setIsLoggedIn(localStorage.getItem('isLoggedIn') === 'true');
+  }, []);
+
+  useEffect(() => {
+    if (isLoggedIn === null) {
+      // Wait until we have checked localStorage
+      return;
+    }
+
     const timer = setTimeout(() => {
-      // In a real app, you'd check for a valid session token
-      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
       if (isLoggedIn) {
         router.replace('/home');
       } else {
@@ -19,7 +28,7 @@ export default function SplashPage() {
     }, 2000); // 2-second splash screen
 
     return () => clearTimeout(timer);
-  }, [router]);
+  }, [isLoggedIn, router]);
 
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center bg-background text-foreground">

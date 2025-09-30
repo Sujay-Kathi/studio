@@ -25,17 +25,22 @@ const SPREADSHEET_ID = 'YOUR_GOOGLE_SHEET_ID_HERE';
 // 5. Share your Google Sheet with the service account's email address and give it "Editor" permissions.
 
 const getGoogleAuth = () => {
-  const { client_email, private_key } = functions.config().google;
-  if (!client_email || !private_key) {
-    console.error('Missing Google service account credentials in Firebase config.');
-    return null;
-  }
+  try {
+    const { client_email, private_key } = functions.config().google;
+    if (!client_email || !private_key) {
+      console.error('Missing Google service account credentials in Firebase config. Run `firebase functions:config:set google.client_email="..." google.private_key="..."`');
+      return null;
+    }
 
-  return new JWT({
-    email: client_email,
-    key: private_key.replace(/\\n/g, '\n'),
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-  });
+    return new JWT({
+      email: client_email,
+      key: private_key.replace(/\\n/g, '\n'),
+      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    });
+  } catch (e) {
+      console.error('Error reading google config. Make sure you have set the environment variables correctly using `firebase functions:config:set google.client_email="..." google.private_key="..."`');
+      return null;
+  }
 };
 
 const getSheetsClient = async () => {
@@ -75,8 +80,15 @@ export const syncResidentsToSheet = functions.firestore
     // This assumes your sheet has headers: id, name, flatNo, phone
     const headers = ['id', 'name', 'flatNo', 'phone'];
     const values = [
-      headers.map(header => residentData[header] || '')
+        // Ensure id is always included and is the residentId
+        [
+            residentId,
+            residentData['name'] || '',
+            residentData['flatNo'] || '',
+            residentData['phone'] || ''
+        ]
     ];
+
 
     try {
       // First, try to find if the resident already exists in the sheet.
@@ -86,27 +98,39 @@ export const syncResidentsToSheet = functions.firestore
       });
 
       const rows = response.data.values || [];
-      let rowIndex = rows.findIndex(row => row[0] === residentId);
+      let rowIndex = -1;
+
+      // Find the row index for the residentId
+      if (rows.length > 0) {
+          rowIndex = rows.findIndex(row => row[0] === residentId);
+      }
+
 
       let range;
       if (rowIndex !== -1) {
         // Resident found, update the row
         range = `A${rowIndex + 1}`;
         console.log(`Updating resident ${residentId} at row ${rowIndex + 1}`);
+         await sheets.spreadsheets.values.update({
+            spreadsheetId: SPREADSHEET_ID,
+            range,
+            valueInputOption: 'USER_ENTERED',
+            requestBody: {
+              values: values,
+            },
+          });
       } else {
         // Resident not found, append a new row
-        range = `A${rows.length + 1}`;
-        console.log(`Appending new resident ${residentId} at row ${rows.length + 1}`);
+        console.log(`Appending new resident ${residentId}`);
+         await sheets.spreadsheets.values.append({
+            spreadsheetId: SPREADSHEET_ID,
+            range: 'A1', // Append after the last row with data
+            valueInputOption: 'USER_ENTERED',
+            requestBody: {
+              values: values,
+            },
+        });
       }
-
-      await sheets.spreadsheets.values.update({
-        spreadsheetId: SPREADSHEET_ID,
-        range,
-        valueInputOption: 'USER_ENTERED',
-        requestBody: {
-          values: values,
-        },
-      });
 
       console.log('Successfully synced data to Google Sheet.');
     } catch (error) {

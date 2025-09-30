@@ -9,7 +9,7 @@ export const residents: Resident[] = [
     { id: '1', name: 'Arjun Sharma', flatNo: 'A-101', phone: '9876543210' },
     { id: '2', name: 'Priya Patel', flatNo: 'B-204', phone: '9876543211' },
     { id: '3', name: 'Rohan Mehta', flatNo: 'C-302', phone: '9876543212' },
-    { id: '4', name: 'sujay', flatNo: 'a704', phone: '9876543213' },
+    { id: '4', name: 'sujay', flatNo: 'a704', phone: '8618642639' },
 ];
 
 export const events: Event[] = [

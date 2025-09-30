@@ -24,6 +24,10 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { EventPosterGenerator } from './event-poster-generator';
+import { addEvent } from '@/lib/actions';
+import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
+import type { Event } from '@/lib/types';
 
 const eventSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -31,7 +35,7 @@ const eventSchema = z.object({
   time: z.string().min(1, 'Time is required'),
   location: z.string().min(3, 'Location is required'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
-  type: z.string().min(1, 'Type is required'),
+  type: z.string().min(1, 'Type is required').transform(v => v.toUpperCase() as Event['type']),
   capacity: z.coerce.number().min(1, 'Capacity must be at least 1'),
   requirements: z.string().optional(),
   benefits: z.string().optional(),
@@ -42,29 +46,53 @@ type EventFormValues = z.infer<typeof eventSchema>;
 
 export function CreateEventForm() {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventSchema),
     defaultValues: {
       title: 'Community Yoga Session',
-      date: '2024-09-15',
-      time: '07:00 AM',
+      date: new Date().toISOString().split('T')[0],
+      time: '07:00',
       location: 'Park Amphitheater',
       description: 'Start your Sunday with a refreshing yoga session for all levels.',
       type: 'WORKSHOP',
       capacity: 50,
+      requirements: 'Yoga Mat, Water Bottle',
+      benefits: 'Free snacks, Certificate',
       highPriority: false,
     },
   });
 
   const { title, description } = useWatch({ control: form.control });
 
-  function onSubmit(data: EventFormValues) {
-    console.log(data);
-    toast({
-      title: 'Event Created!',
-      description: `The event "${data.title}" has been successfully created.`,
-    });
-    form.reset();
+  async function onSubmit(data: EventFormValues) {
+    setIsSubmitting(true);
+    try {
+      const eventData = {
+        ...data,
+        priority: data.highPriority ? 'high' : 'normal',
+        requirements: data.requirements ? data.requirements.split(',').map(s => s.trim()) : [],
+        benefits: data.benefits ? data.benefits.split(',').map(s => s.trim()) : [],
+      };
+      const result = await addEvent(eventData as any);
+      if (result.success) {
+        toast({
+          title: 'Event Created!',
+          description: `The event "${data.title}" has been successfully created.`,
+        });
+        form.reset();
+      } else {
+        throw new Error('Failed to create event');
+      }
+    } catch (error) {
+       toast({
+        variant: 'destructive',
+        title: 'An error occurred',
+        description: 'Failed to create the event. Please try again.',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -225,7 +253,10 @@ export function CreateEventForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">Create Event</Button>
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isSubmitting ? 'Creating...' : 'Create Event'}
+            </Button>
           </form>
         </Form>
       </CardContent>

@@ -17,10 +17,10 @@ import { events, announcements } from '@/lib/data';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 
-const upcomingEvent = events.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
-const latestAnnouncement = announcements.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
-
 export default function HomePage() {
+  const upcomingEvent = [...events].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
+  const latestAnnouncement = [...announcements].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+
   return (
     <div className="space-y-6 p-4">
       <div className="text-center">

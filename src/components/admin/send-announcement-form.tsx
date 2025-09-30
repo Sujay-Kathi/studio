@@ -22,6 +22,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { addAnnouncement } from '@/lib/actions';
+import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 
 const announcementSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -37,6 +40,7 @@ type AnnouncementFormValues = z.infer<typeof announcementSchema>;
 
 export function SendAnnouncementForm() {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<AnnouncementFormValues>({
     resolver: zodResolver(announcementSchema),
     defaultValues: {
@@ -50,13 +54,40 @@ export function SendAnnouncementForm() {
     },
   });
 
-  function onSubmit(data: AnnouncementFormValues) {
-    console.log(data);
-    toast({
-      title: 'Announcement Sent!',
-      description: 'Your announcement has been published.',
-    });
-    form.reset();
+  async function onSubmit(data: AnnouncementFormValues) {
+    setIsSubmitting(true);
+    try {
+      const announcementData = {
+        title: data.title,
+        content: data.content,
+        author: data.author,
+        timing: {
+          ...(data.eta && { eta: data.eta }),
+          ...(data.from && { from: data.from }),
+          ...(data.to && { to: data.to }),
+        }
+      };
+
+      const result = await addAnnouncement(announcementData);
+
+       if (result.success) {
+        toast({
+          title: 'Announcement Sent!',
+          description: 'Your announcement has been published.',
+        });
+        form.reset();
+      } else {
+        throw new Error('Failed to send announcement');
+      }
+    } catch (error) {
+       toast({
+        variant: 'destructive',
+        title: 'An error occurred',
+        description: 'Failed to send the announcement. Please try again.',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -167,7 +198,10 @@ export function SendAnnouncementForm() {
                 )}
               />
             </div>
-            <Button type="submit" className="w-full">Send Announcement</Button>
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isSubmitting ? 'Sending...' : 'Send Announcement'}
+            </Button>
           </form>
         </Form>
       </CardContent>

@@ -12,8 +12,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, UserCircle } from 'lucide-react';
-import { residents } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { getFirestore, doc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { app } from '@/firebase/config';
 
 const profileSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -28,6 +29,7 @@ export default function EditProfilePage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
   const form = useForm<ProfileFormValues>({
@@ -68,32 +70,57 @@ export default function EditProfilePage() {
     }
   };
 
-  function onSubmit(data: ProfileFormValues) {
-    // Update localStorage
-    localStorage.setItem('userName', data.name);
-    localStorage.setItem('userFlatNo', data.flatNo);
-    if (data.avatar) {
-      localStorage.setItem('userAvatar', data.avatar);
+  async function onSubmit(data: ProfileFormValues) {
+    setIsSaving(true);
+    try {
+        const db = getFirestore(app);
+        const residentsCol = collection(db, 'residents');
+        const q = query(residentsCol, where('phone', '==', data.phone));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+            const residentDocRef = querySnapshot.docs[0].ref;
+            await updateDoc(residentDocRef, {
+                name: data.name,
+                flatNo: data.flatNo,
+                avatar: data.avatar || '',
+            });
+
+             // Update localStorage
+            localStorage.setItem('userName', data.name);
+            localStorage.setItem('userFlatNo', data.flatNo);
+            if (data.avatar) {
+                localStorage.setItem('userAvatar', data.avatar);
+            } else {
+                localStorage.removeItem('userAvatar');
+            }
+
+            // Dispatch a custom event to notify other components (like the header) of the change
+            window.dispatchEvent(new CustomEvent('profileUpdated'));
+
+            toast({
+                title: 'Profile Updated',
+                description: 'Your details have been saved successfully.',
+            });
+            router.back();
+
+        } else {
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Could not find your profile to update.',
+            });
+        }
+    } catch(error) {
+        console.error("Error updating profile:", error);
+        toast({
+            variant: 'destructive',
+            title: 'Update Failed',
+            description: 'An error occurred while saving your profile.',
+        });
+    } finally {
+        setIsSaving(false);
     }
-
-    // Update the mock database (in-memory)
-    const residentIndex = residents.findIndex(r => r.phone === data.phone);
-    if (residentIndex !== -1) {
-      residents[residentIndex].name = data.name;
-      residents[residentIndex].flatNo = data.flatNo;
-      if (data.avatar) {
-        residents[residentIndex].avatar = data.avatar;
-      }
-    }
-
-    // Dispatch a custom event to notify other components (like the header) of the change
-    window.dispatchEvent(new CustomEvent('profileUpdated'));
-
-    toast({
-      title: 'Profile Updated',
-      description: 'Your details have been saved successfully.',
-    });
-    router.back();
   }
   
   if (isLoading) {
@@ -153,7 +180,7 @@ export default function EditProfilePage() {
                   <FormItem>
                     <FormLabel>Full Name</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input {...field} disabled={isSaving} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -166,7 +193,7 @@ export default function EditProfilePage() {
                   <FormItem>
                     <FormLabel>Flat Number</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input {...field} disabled={isSaving}/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -185,8 +212,9 @@ export default function EditProfilePage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full">
-                Save Changes
+              <Button type="submit" className="w-full" disabled={isSaving}>
+                {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isSaving ? 'Saving...' : 'Save Changes'}
               </Button>
             </form>
           </Form>

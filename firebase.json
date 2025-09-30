@@ -1,0 +1,6 @@
+{
+  "functions": {
+    "source": "src/firebase/functions",
+    "runtime": "nodejs20"
+  }
+}

@@ -11,6 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import { residents } from '@/lib/data';
 
 const profileSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -46,8 +47,17 @@ export default function EditProfilePage() {
   }, [form]);
 
   function onSubmit(data: ProfileFormValues) {
+    // Update localStorage
     localStorage.setItem('userName', data.name);
     localStorage.setItem('userFlatNo', data.flatNo);
+
+    // Update the mock database (in-memory)
+    const residentIndex = residents.findIndex(r => r.phone === data.phone);
+    if (residentIndex !== -1) {
+      residents[residentIndex].name = data.name;
+      residents[residentIndex].flatNo = data.flatNo;
+    }
+
     toast({
       title: 'Profile Updated',
       description: 'Your details have been saved successfully.',

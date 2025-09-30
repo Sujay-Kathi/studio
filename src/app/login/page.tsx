@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import { SparkIcon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -26,12 +28,22 @@ export default function LoginPage() {
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle className="text-center font-headline text-2xl">Access Your Community</CardTitle>
-            <CardDescription className="text-center">Click the button below to enter the app.</CardDescription>
+            <CardDescription className="text-center">Enter your credentials below to enter the app.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={handleLogin} className="w-full bg-primary hover:bg-primary/90">
-              Enter Rajsri SPARK
-            </Button>
+            <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" type="email" placeholder="me@example.com" required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input id="password" type="password" required />
+              </div>
+              <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
+                Enter Rajsri SPARK
+              </Button>
+            </form>
           </CardContent>
         </Card>
       </div>

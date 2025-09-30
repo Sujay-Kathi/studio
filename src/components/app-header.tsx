@@ -21,13 +21,16 @@ export default function AppHeader() {
   const router = useRouter();
   const [userName, setUserName] = useState<string | null>(null);
   const [userFlatNo, setUserFlatNo] = useState<string | null>(null);
+  const [userPhone, setUserPhone] = useState<string | null>(null);
   const [userInitial, setUserInitial] = useState('');
 
   useEffect(() => {
     const name = localStorage.getItem('userName');
     const flatNo = localStorage.getItem('userFlatNo');
+    const phone = localStorage.getItem('userPhone');
     setUserName(name);
     setUserFlatNo(flatNo);
+    setUserPhone(phone);
     if (name) {
       setUserInitial(name.charAt(0).toUpperCase());
     }
@@ -81,6 +84,9 @@ export default function AppHeader() {
                 <DropdownMenuItem disabled>{userName || 'Resident'}</DropdownMenuItem>
                 <DropdownMenuItem disabled>
                   {userFlatNo ? `Flat no: ${userFlatNo}`: 'Flat No. not found'}
+                </DropdownMenuItem>
+                <DropdownMenuItem disabled>
+                  {userPhone ? `Phone: ${userPhone}`: 'Phone No. not found'}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

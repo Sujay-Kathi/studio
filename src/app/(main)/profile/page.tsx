@@ -21,6 +21,10 @@ export default function ProfilePage() {
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('isAdminLoggedIn');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userFlatNo');
+    localStorage.removeItem('userPhone');
+    localStorage.removeItem('userAvatar');
     router.replace('/login');
   };
 

@@ -12,38 +12,31 @@ import { residents } from '@/lib/data';
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [name, setName] = useState('');
-  const [flatNo, setFlatNo] = useState('');
+  const [phone, setPhone] = useState('');
 
   const handleUserLogin = () => {
-    if (name.trim() === '' || flatNo.trim() === '') {
+    if (phone.trim() === '') {
       toast({
         variant: 'destructive',
         title: 'Login Failed',
-        description: 'Please enter your name and flat number.',
+        description: 'Please enter your phone number.',
       });
       return;
     }
 
-    const normalizedName = name.trim().toLowerCase();
-    const normalizedFlatNo = flatNo.trim().toLowerCase();
-
-    const resident = residents.find(
-      (r) =>
-        r.name.toLowerCase() === normalizedName &&
-        r.flatNo.toLowerCase() === normalizedFlatNo
-    );
+    const resident = residents.find((r) => r.phone === phone.trim());
 
     if (resident) {
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('userName', resident.name);
       localStorage.setItem('userFlatNo', resident.flatNo);
+      localStorage.setItem('userPhone', resident.phone);
       router.replace('/home');
     } else {
       toast({
         variant: 'destructive',
         title: 'Login Failed',
-        description: 'No resident found with that name and flat number.',
+        description: 'This phone number is not registered. Please contact administration.',
       });
     }
   };
@@ -65,23 +58,13 @@ export default function LoginPage() {
       <main className="flex-grow flex flex-col items-center px-6 space-y-4">
         <div className="w-full max-w-xs space-y-4">
           <div className="grid w-full items-center gap-1.5">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="phone">Phone Number</Label>
             <Input 
-              type="text" 
-              id="name" 
-              placeholder="Your Name" 
-              value={name}
-              onChange={(e) => setName(e.target.value)} 
-            />
-          </div>
-           <div className="grid w-full items-center gap-1.5">
-            <Label htmlFor="flatNo">Flat No.</Label>
-            <Input 
-              type="text" 
-              id="flatNo" 
-              placeholder="e.g. A-101" 
-              value={flatNo}
-              onChange={(e) => setFlatNo(e.target.value)} 
+              type="tel" 
+              id="phone" 
+              placeholder="Your 10-digit phone number" 
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)} 
             />
           </div>
           <Button

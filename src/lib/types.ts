@@ -51,4 +51,5 @@ export interface Resident {
   id: string;
   name: string;
   flatNo: string;
+  phone: string;
 }

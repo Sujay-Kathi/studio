@@ -52,4 +52,5 @@ export interface Resident {
   name: string;
   flatNo: string;
   phone: string;
+  avatar?: string;
 }

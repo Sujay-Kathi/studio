@@ -38,6 +38,11 @@ export default function LoginPage() {
         localStorage.setItem('userName', resident.name);
         localStorage.setItem('userFlatNo', resident.flatNo);
         localStorage.setItem('userPhone', resident.phone);
+        if (resident.avatar) {
+          localStorage.setItem('userAvatar', resident.avatar);
+        } else {
+            localStorage.removeItem('userAvatar');
+        }
         router.replace('/home');
       } else {
         toast({

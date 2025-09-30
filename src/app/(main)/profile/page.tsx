@@ -2,11 +2,14 @@
 
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChevronRight, UserCog, ShieldAlert } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ChevronRight, UserCog, ShieldAlert, LogOut } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-export default function MorePage() {
+export default function ProfilePage() {
   const [isAdmin, setIsAdmin] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     // This check ensures that the code only runs on the client-side,
@@ -14,6 +17,12 @@ export default function MorePage() {
     const isAdminLoggedIn = localStorage.getItem('isAdminLoggedIn') === 'true';
     setIsAdmin(isAdminLoggedIn);
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('isAdminLoggedIn');
+    router.replace('/login');
+  };
 
   return (
     <div className="p-4 space-y-4">
@@ -41,6 +50,12 @@ export default function MorePage() {
           </Card>
         </Link>
       )}
+      <div className="pt-4">
+        <Button variant="outline" className="w-full" onClick={handleLogout}>
+          <LogOut className="mr-2 h-4 w-4" />
+          Log Out
+        </Button>
+      </div>
     </div>
   );
 }

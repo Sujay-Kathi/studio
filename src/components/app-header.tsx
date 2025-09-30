@@ -17,7 +17,7 @@ export default function AppHeader() {
     if (pathname === '/announcements') return 'Announcements';
     if (pathname.startsWith('/announcements/')) return 'Announcement Details';
     if (pathname === '/emergency') return 'Emergency Directory';
-    if (pathname === '/more') return 'More';
+    if (pathname === '/profile') return 'Profile';
     if (pathname === '/volunteer') return 'Volunteer Profile';
     if (pathname === '/admin') return 'Admin Panel';
     return 'Rajsri SPARK';
@@ -28,7 +28,7 @@ export default function AppHeader() {
     '/home',
     '/events',
     '/emergency',
-    '/more',
+    '/profile',
   ].includes(pathname);
 
   return (

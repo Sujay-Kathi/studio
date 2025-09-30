@@ -1,6 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 
-export type Screen = 'Home' | 'Events' | 'Announcements' | 'Emergency' | 'More' | 'Volunteer' | 'Admin' | 'Event Details' | 'Announcement Details';
+export type Screen = 'Home' | 'Events' | 'Announcements' | 'Emergency' | 'Profile' | 'Volunteer' | 'Admin' | 'Event Details' | 'Announcement Details';
 
 export interface Event {
   id: string;

@@ -2,13 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Calendar, LayoutGrid, Phone } from 'lucide-react';
+import { Home, Calendar, User, Phone } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { href: '/home', label: 'Home', icon: Home },
   { href: '/events', label: 'Events', icon: Calendar },
-  { href: '/more', label: 'More', icon: LayoutGrid },
+  { href: '/profile', label: 'Profile', icon: User },
   { href: '/emergency', label: 'Emergency', icon: Phone },
 ];
 
@@ -19,7 +19,7 @@ export default function BottomNav() {
     <nav className="fixed bottom-0 z-50 w-full max-w-md border-t bg-background/80 backdrop-blur-sm">
       <div className="flex h-20 justify-around">
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = pathname.startsWith(item.href);
           return (
             <Link
               key={item.href}

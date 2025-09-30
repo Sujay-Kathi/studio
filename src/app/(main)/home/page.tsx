@@ -49,7 +49,7 @@ export default function HomePage() {
           </Link>
         )}
 
-        <Link href="/more" className="col-span-1">
+        <Link href="/volunteer" className="col-span-1">
           <Card className="h-full transform-gpu transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
             <CardHeader>
               <CardDescription className="flex items-center gap-2">

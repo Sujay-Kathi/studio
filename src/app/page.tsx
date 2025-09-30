@@ -9,11 +9,15 @@ export default function RootPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      router.replace('/login');
-    }, 5000); // 5 seconds
+    // This effect runs only on the client side
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
-    return () => clearTimeout(timer); // Cleanup the timer
+    // Redirect based on login status
+    if (isLoggedIn) {
+      router.replace('/home');
+    } else {
+      router.replace('/login');
+    }
   }, [router]);
 
   return (

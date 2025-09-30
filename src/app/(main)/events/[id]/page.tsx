@@ -1,21 +1,17 @@
-'use client'
-
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { events } from '@/lib/data';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Button } from '@/components/ui/button';
 import {
-  Bell,
-  CheckCircle,
-  Share2,
   MapPin,
   Clock,
   ListChecks,
   Award,
+  Calendar,
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { EventActions } from '@/components/event-actions';
 
 type EventDetailPageProps = {
   params: { id: string };
@@ -30,12 +26,6 @@ export default function EventDetailPage({ params }: EventDetailPageProps) {
 
   const registrationPercentage = (event.participants / event.capacity) * 100;
   
-  const shareOnWhatsApp = () => {
-    const text = `Check out this event: ${event.title} on ${format(new Date(event.date), 'PP')}! More details: ${window.location.href}`;
-    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-    window.open(url, '_blank');
-  };
-
   return (
     <div className="pb-8">
       <div className="relative h-60 w-full">
@@ -112,11 +102,7 @@ export default function EventDetailPage({ params }: EventDetailPageProps) {
           <Progress value={registrationPercentage} />
         </div>
 
-        <div className="grid grid-cols-3 gap-2 pt-4">
-          <Button className="col-span-3 sm:col-span-1" size="lg"><CheckCircle /> Register</Button>
-          <Button variant="outline" size="lg"><Bell /> Set Reminder</Button>
-          <Button variant="outline" size="lg" onClick={shareOnWhatsApp}><Share2 /> Share</Button>
-        </div>
+        <EventActions event={event} />
       </div>
     </div>
   );

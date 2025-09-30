@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { ArrowLeft, User } from 'lucide-react';
+import { ArrowLeft, User, UserCog } from 'lucide-react';
 import { ThemeToggle } from './theme-toggle';
 import { Button } from './ui/button';
 import type { Screen } from '@/lib/types';
@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 export default function AppHeader() {
   const pathname = usePathname();
@@ -44,6 +45,7 @@ export default function AppHeader() {
     if (pathname.startsWith('/announcements/')) return 'Announcement Details';
     if (pathname === '/emergency') return 'Emergency Directory';
     if (pathname === '/profile') return 'Profile';
+    if (pathname === '/profile/edit') return 'Edit Profile';
     if (pathname === '/volunteer') return 'Volunteer Profile';
     if (pathname === '/admin') return 'Admin Panel';
     return 'Rajsri SPARK';
@@ -79,7 +81,12 @@ export default function AppHeader() {
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuLabel>
+                  <Link href="/profile/edit" className="flex items-center gap-2">
+                    <UserCog className="h-4 w-4" />
+                    <span>My Account</span>
+                  </Link>
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem disabled>{userName || 'Resident'}</DropdownMenuItem>
                 <DropdownMenuItem disabled>

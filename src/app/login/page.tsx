@@ -7,8 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { app } from '@/firebase/config';
-import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
+import { residents } from '@/lib/data';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -27,17 +26,14 @@ export default function LoginPage() {
     }
 
     setLoading(true);
-    const db = getFirestore(app);
-    const residentsCol = collection(db, 'residents');
-    const q = query(residentsCol, where('phone', '==', phone.trim()));
     
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 500));
+
     try {
-      const querySnapshot = await getDocs(q);
+      const resident = residents.find(r => r.phone === phone.trim());
 
-      if (!querySnapshot.empty) {
-        const residentDoc = querySnapshot.docs[0];
-        const resident = residentDoc.data();
-
+      if (resident) {
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('userName', resident.name);
         localStorage.setItem('userFlatNo', resident.flatNo);

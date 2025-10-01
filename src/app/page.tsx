@@ -1,36 +1,19 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import { SparkIcon } from '@/components/icons';
-import { Loader2 } from 'lucide-react';
 
-export default function RootPage() {
-  const router = useRouter();
-
-  useEffect(() => {
-    // This effect runs only on the client side
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-
-    // Redirect based on login status
-    if (isLoggedIn) {
-      router.replace('/home');
-    } else {
-      router.replace('/login');
-    }
-  }, [router]);
-
+export default function Home() {
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center bg-background">
-      <div className="flex flex-col items-center gap-8">
-        <div className="inline-block rounded-xl bg-card p-4 shadow-lg">
-          <SparkIcon className="h-24 w-24 text-primary" />
-        </div>
-        <h1 className="font-headline text-4xl font-bold text-foreground">Rajsri SPARK</h1>
-      </div>
-      <div className="absolute bottom-16 flex items-center gap-2 text-muted-foreground">
-        <Loader2 className="h-5 w-5 animate-spin" />
-        <span>Loading...</span>
+    <div className="flex h-screen w-full flex-col items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="flex flex-col items-center gap-4">
+        <SparkIcon className="h-24 w-24 text-primary" />
+        <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-200">
+          Welcome to NextJS
+        </h1>
+        <p className="text-lg text-gray-600 dark:text-gray-400">
+          Get started by editing{' '}
+          <code className="rounded bg-gray-200 px-2 py-1 font-mono text-sm dark:bg-gray-800">
+            src/app/page.tsx
+          </code>
+        </p>
       </div>
     </div>
   );

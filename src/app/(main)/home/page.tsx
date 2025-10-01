@@ -114,7 +114,16 @@ export default function HomePage() {
             </div>
         ) : latestAnnouncement && (
           <Link href={`/announcements/${latestAnnouncement.id}`} className="col-span-1 sm:col-span-2">
-             <Card className="h-full transform-gpu transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+             <Card className="h-full transform-gpu overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+               <div className="relative h-40 w-full">
+                <Image
+                  src={latestAnnouncement.image}
+                  alt={latestAnnouncement.title}
+                  fill
+                  className="object-cover"
+                  data-ai-hint={latestAnnouncement.imageHint}
+                />
+              </div>
               <CardHeader>
                 <CardDescription className="flex items-center gap-2">
                   <Megaphone className="h-4 w-4" />

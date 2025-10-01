@@ -1,19 +1,33 @@
-import { SparkIcon } from '@/components/icons';
+'use client';
 
-export default function Home() {
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { SparkIcon } from '@/components/icons';
+import { Loader2 } from 'lucide-react';
+
+export default function SplashScreen() {
+  const router = useRouter();
+
+  useEffect(() => {
+    // This timeout is to ensure the splash screen is visible for a moment.
+    // In a real app, you might be loading data here.
+    const timer = setTimeout(() => {
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      if (isLoggedIn) {
+        router.replace('/home');
+      } else {
+        router.replace('/login');
+      }
+    }, 1500); // Show splash for 1.5 seconds
+
+    return () => clearTimeout(timer);
+  }, [router]);
+
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center bg-gray-50 dark:bg-gray-900">
-      <div className="flex flex-col items-center gap-4">
+    <div className="flex h-screen w-full flex-col items-center justify-center bg-background">
+      <div className="flex flex-col items-center gap-6 text-center">
         <SparkIcon className="h-24 w-24 text-primary" />
-        <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-200">
-          Welcome to NextJS
-        </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400">
-          Get started by editing{' '}
-          <code className="rounded bg-gray-200 px-2 py-1 font-mono text-sm dark:bg-gray-800">
-            src/app/page.tsx
-          </code>
-        </p>
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     </div>
   );

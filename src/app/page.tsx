@@ -25,10 +25,11 @@ export default function SplashScreen() {
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center bg-background">
-      <div className="flex flex-col items-center gap-6 text-center">
-        <SparkIcon className="h-24 w-24 text-primary" />
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="flex items-center gap-2 font-semibold">
+        <SparkIcon className="h-8 w-8" />
+        <h1 className="text-2xl">Volunteer App</h1>
       </div>
+      <Loader2 className="mt-4 h-6 w-6 animate-spin" />
     </div>
   );
 }

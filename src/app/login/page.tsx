@@ -5,7 +5,7 @@ import { SparkIcon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { getResidentByPhone } from '@/lib/data';
 import { Loader2 } from 'lucide-react';
@@ -15,15 +15,6 @@ export default function LoginPage() {
   const { toast } = useToast();
   const [phone, setPhone] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isPageLoading, setPageLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setPageLoading(false);
-    }, 2000); // Show splash for 2 seconds
-
-    return () => clearTimeout(timer);
-  }, []);
 
   const handleUserLogin = async () => {
     setIsLoading(true);
@@ -62,17 +53,6 @@ export default function LoginPage() {
   const handleAdminLoginClick = () => {
     router.push('/login/admin');
   };
-
-  if (isPageLoading) {
-    return (
-      <div className="flex h-screen w-full flex-col items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-6 text-center">
-          <SparkIcon className="h-24 w-24 text-primary" />
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex h-screen flex-col font-display text-gray-800 dark:text-gray-200">

@@ -94,13 +94,10 @@ export default function HomePage() {
         </Link>
 
         <Link href="/emergency" className="col-span-1">
-          <Card className="h-full transform-gpu border-red-500/50 bg-red-50/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:bg-red-900/20">
+          <Card className="flex h-full transform-gpu flex-col items-center justify-center text-center border-red-500/50 bg-red-50/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:bg-red-900/20">
             <CardHeader>
-              <CardDescription className="flex items-center gap-2 text-red-600 dark:text-red-400">
-                <Siren className="h-4 w-4" />
-                Emergency
-              </CardDescription>
-              <CardTitle className="font-headline text-lg text-red-800 dark:text-red-300">Quick Call</CardTitle>
+              <Siren className="mx-auto h-10 w-10 text-destructive" />
+              <CardTitle className="font-headline text-lg pt-2 text-red-800 dark:text-red-300">Emergency</CardTitle>
             </CardHeader>
             <CardContent>
                  <div className="flex items-center justify-between text-sm text-red-600 dark:text-red-400">

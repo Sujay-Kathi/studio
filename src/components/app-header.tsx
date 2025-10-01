@@ -33,7 +33,7 @@ export default function AppHeader() {
     localStorage.removeItem('userFlatNo');
     localStorage.removeItem('userPhone');
     localStorage.removeItem('userAvatar');
-    router.replace('/login');
+    router.replace('/');
   };
 
   useEffect(() => {

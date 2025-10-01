@@ -25,7 +25,7 @@ export default function ProfilePage() {
     localStorage.removeItem('userFlatNo');
     localStorage.removeItem('userPhone');
     localStorage.removeItem('userAvatar');
-    router.replace('/login');
+    router.replace('/');
   };
 
   return (

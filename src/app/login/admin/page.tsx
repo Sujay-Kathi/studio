@@ -13,17 +13,37 @@ export default function AdminLoginPage() {
   const { toast } = useToast();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleAdminLogin = () => {
-    if (username === 'admin' && password === '1234') {
-      localStorage.setItem('isAdminLoggedIn', 'true');
-      router.replace('/admin');
-    } else {
+  const handleAdminLogin = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (response.ok) {
+        localStorage.setItem('isAdminLoggedIn', 'true');
+        router.replace('/admin');
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Login Failed',
+          description: 'Invalid username or password for admin.',
+        });
+      }
+    } catch (error) {
       toast({
         variant: 'destructive',
-        title: 'Login Failed',
-        description: 'Invalid username or password for admin.',
+        title: 'Login Error',
+        description: 'An unexpected error occurred during login.',
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -46,7 +66,8 @@ export default function AdminLoginPage() {
               id="username" 
               placeholder="Username" 
               value={username}
-              onChange={(e) => setUsername(e.target.value)} 
+              onChange={(e) => setUsername(e.target.value)}
+              disabled={isLoading}
             />
           </div>
           <div className="grid w-full items-center gap-1.5">
@@ -57,13 +78,15 @@ export default function AdminLoginPage() {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              disabled={isLoading}
             />
           </div>
           <Button
               onClick={handleAdminLogin}
               className="w-full bg-primary text-primary-foreground font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out h-auto text-base"
+              disabled={isLoading}
           >
-              Login
+              {isLoading ? 'Logging in...' : 'Login'}
           </Button>
         </div>
       </main>

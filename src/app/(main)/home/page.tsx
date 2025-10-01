@@ -82,19 +82,13 @@ export default function HomePage() {
         )}
 
         <Link href="/volunteer" className="col-span-1">
-          <Card className="h-full transform-gpu transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+          <Card className="flex h-full transform-gpu flex-col items-center justify-center text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
             <CardHeader>
-              <CardDescription className="flex items-center gap-2">
-                <Handshake className="h-4 w-4" />
-                Volunteer
-              </CardDescription>
-              <CardTitle className="font-headline text-lg">Your Status</CardTitle>
+              <Handshake className="mx-auto h-10 w-10 text-primary" />
+              <CardTitle className="font-headline text-lg pt-2">Volunteer</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <span>3 Services</span>
-                <ArrowRight className="h-4 w-4" />
-              </div>
+              <p className="text-sm text-muted-foreground">Check your status</p>
             </CardContent>
           </Card>
         </Link>

@@ -20,10 +20,26 @@ let announcements: Announcement[] = [
   { id: '3', title: 'Monthly Community Meeting', content: 'The monthly community meeting will be held this Sunday at 5 PM in the clubhouse. Agenda: Park renovation and security updates.', author: 'Management', date: '2024-08-08', image: findImage('announcement-3'), imageHint: findImageHint('announcement-3'), timing: { eta: '17:00' } },
 ];
 
-let residents: Resident[] = [
-  { id: '1', name: 'John Doe', flatNo: 'A-101', phone: '1234567890' },
-  { id: '2', name: 'Jane Smith', flatNo: 'B-202', phone: '0987654321', avatar: 'https://i.pravatar.cc/150?u=jane_smith' },
-  { id: '3', name: 'Sujay Kathi', flatNo: 'C-303', phone: '8618642639' },
+export let residents: Resident[] = [
+  {
+    "id": "1",
+    "name": "John Doe",
+    "flatNo": "A-101",
+    "phone": "1234567890"
+  },
+  {
+    "id": "2",
+    "name": "Jane Smith",
+    "flatNo": "B-202",
+    "phone": "0987654321",
+    "avatar": "https://i.pravatar.cc/150?u=jane_smith"
+  },
+  {
+    "id": "3",
+    "name": "Sujay Kathi",
+    "flatNo": "A-704",
+    "phone": "8618642639"
+  }
 ];
 
 // --- Data Access Functions ---
@@ -74,15 +90,6 @@ export async function addAnnouncement(announcementData: Omit<Announcement, 'id'|
 
 export async function getResidentByPhone(phone: string): Promise<Resident | undefined> {
     return Promise.resolve(residents.find(res => res.phone === phone));
-}
-
-export async function updateResident(id: string, data: Partial<{ name: string; flatNo: string; avatar?: string }>) {
-  const residentIndex = residents.findIndex(res => res.id === id);
-  if (residentIndex > -1) {
-    residents[residentIndex] = { ...residents[residentIndex], ...data };
-    return { success: true };
-  }
-  return { success: false, error: 'Resident not found' };
 }
 
 // --- Static Data ---

@@ -23,6 +23,7 @@ let announcements: Announcement[] = [
 let residents: Resident[] = [
   { id: '1', name: 'John Doe', flatNo: 'A-101', phone: '1234567890' },
   { id: '2', name: 'Jane Smith', flatNo: 'B-202', phone: '0987654321', avatar: 'https://i.pravatar.cc/150?u=jane_smith' },
+  { id: '3', name: 'Sujay Kathi', flatNo: 'C-303', phone: '8618642639' },
 ];
 
 // --- Data Access Functions ---
@@ -51,7 +52,7 @@ export async function addEvent(eventData: Omit<Event, 'id' | 'image' | 'imageHin
 
 export async function getAnnouncements(): Promise<Announcement[]> {
   // Sort announcements by date in descending order
-  const sortedAnnouncements = [...announcements].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  const sortedAnnouncements = [...announcements].sort((a, b) => new Date(b.date).getTime() - new 'Date'(b.date).getTime());
   return Promise.resolve(sortedAnnouncements);
 }
 

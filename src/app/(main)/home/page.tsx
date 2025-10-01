@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Card,
   CardContent,
@@ -15,13 +18,27 @@ import {
 } from 'lucide-react';
 import { getEvents, getAnnouncements } from '@/lib/data';
 import { format } from 'date-fns';
+import { useEffect, useState } from 'react';
+import type { Announcement, Event } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default async function HomePage() {
-  const upcomingEvents = await getEvents();
-  const latestAnnouncements = await getAnnouncements();
+export default function HomePage() {
+  const [upcomingEvent, setUpcomingEvent] = useState<Event | null>(null);
+  const [latestAnnouncement, setLatestAnnouncement] = useState<Announcement | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const upcomingEvent = upcomingEvents[0];
-  const latestAnnouncement = latestAnnouncements[0];
+  useEffect(() => {
+    async function fetchData() {
+      const [events, announcements] = await Promise.all([
+        getEvents(),
+        getAnnouncements(),
+      ]);
+      setUpcomingEvent(events[0] || null);
+      setLatestAnnouncement(announcements[0] || null);
+      setLoading(false);
+    }
+    fetchData();
+  }, []);
 
   return (
     <div className="space-y-6 p-4">
@@ -31,9 +48,22 @@ export default async function HomePage() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {upcomingEvent && (
+        {loading ? (
+           <div className="col-span-1 sm:col-span-2">
+             <Skeleton className="h-48 w-full rounded-lg" />
+           </div>
+        ) : upcomingEvent && (
           <Link href={`/events/${upcomingEvent.id}`} className="col-span-1 sm:col-span-2">
-            <Card className="h-full transform-gpu transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+            <Card className="h-full transform-gpu overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+               <div className="relative h-40 w-full">
+                <Image
+                  src={upcomingEvent.image}
+                  alt={upcomingEvent.title}
+                  fill
+                  className="object-cover"
+                  data-ai-hint={upcomingEvent.imageHint}
+                />
+              </div>
               <CardHeader>
                 <CardDescription className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
@@ -87,8 +117,12 @@ export default async function HomePage() {
           </Card>
         </Link>
         
-        {latestAnnouncement && (
-          <Link href="/announcements" className="col-span-1 sm:col-span-2">
+        {loading ? (
+            <div className="col-span-1 sm:col-span-2">
+                <Skeleton className="h-48 w-full rounded-lg" />
+            </div>
+        ) : latestAnnouncement && (
+          <Link href={`/announcements/${latestAnnouncement.id}`} className="col-span-1 sm:col-span-2">
              <Card className="h-full transform-gpu transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
               <CardHeader>
                 <CardDescription className="flex items-center gap-2">

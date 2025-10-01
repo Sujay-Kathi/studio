@@ -52,7 +52,7 @@ export async function addEvent(eventData: Omit<Event, 'id' | 'image' | 'imageHin
 
 export async function getAnnouncements(): Promise<Announcement[]> {
   // Sort announcements by date in descending order
-  const sortedAnnouncements = [...announcements].sort((a, b) => new Date(b.date).getTime() - new 'Date'(b.date).getTime());
+  const sortedAnnouncements = [...announcements].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   return Promise.resolve(sortedAnnouncements);
 }
 

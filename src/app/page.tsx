@@ -18,7 +18,7 @@ export default function SplashScreen() {
       } else {
         router.replace('/login');
       }
-    }, 1500); // Show splash for 1.5 seconds
+    }, 2000); // Show splash for 2 seconds
 
     return () => clearTimeout(timer);
   }, [router]);

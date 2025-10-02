@@ -1,5 +1,5 @@
 import { getFirestore, collection, getDocs, doc, getDoc, query, where } from "firebase/firestore";
-import type { Event, Announcement, EmergencyContact, VolunteerService, Resident } from './types';
+import type { Event, Announcement, EmergencyContact, VolunteerService } from './types';
 import { Shield, Siren, Ambulance, Wrench } from 'lucide-react';
 import { db } from '@/firebase/config';
 
@@ -61,22 +61,6 @@ export async function getAnnouncementById(id: string): Promise<Announcement | un
     console.error("Error fetching announcement by ID from Firestore: ", error);
     return undefined;
   }
-}
-
-export async function getResidentByPhone(phone: string): Promise<Resident | undefined> {
-    try {
-        const residentsCol = collection(db, 'residents');
-        const q = query(residentsCol, where("phone", "==", phone));
-        const querySnapshot = await getDocs(q);
-        if (!querySnapshot.empty) {
-            const residentDoc = querySnapshot.docs[0];
-            return { id: residentDoc.id, ...residentDoc.data() } as Resident;
-        }
-        return undefined;
-    } catch (error) {
-        console.error("Error fetching resident by phone from Firestore: ", error);
-        return undefined;
-    }
 }
 
 // --- Static Data ---

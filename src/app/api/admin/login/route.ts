@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
 
   // TODO: Move these to environment variables
   const ADMIN_USERNAME = 'admin';
-  const ADMIN_PASSWORD = 'password';
+  const ADMIN_PASSWORD = '1234';
 
   if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
     return NextResponse.json({ success: true });

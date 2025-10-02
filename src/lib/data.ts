@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getFirestore, collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { getFirestore, collection, getDocs, doc, getDoc, query, where } from "firebase/firestore";
 import { getAuth } from 'firebase/auth';
 import type { Event, Announcement, EmergencyContact, VolunteerService, Resident } from './types';
 import { Shield, Siren, Ambulance, Wrench } from 'lucide-react';
@@ -65,15 +65,21 @@ export async function getAnnouncementById(id: string): Promise<Announcement | un
   }
 }
 
-export let residents: Resident[] = [
-  // ... (mock residents data remains the same)
-];
-
-
 export async function getResidentByPhone(phone: string): Promise<Resident | undefined> {
-    return Promise.resolve(residents.find(res => res.phone === phone));
+    try {
+        const residentsCol = collection(db, 'residents');
+        const q = query(residentsCol, where("phone", "==", phone));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+            const residentDoc = querySnapshot.docs[0];
+            return { id: residentDoc.id, ...residentDoc.data() } as Resident;
+        }
+        return undefined;
+    } catch (error) {
+        console.error("Error fetching resident by phone from Firestore: ", error);
+        return undefined;
+    }
 }
-
 
 // --- Static Data ---
 
@@ -90,6 +96,7 @@ export const volunteerServices: VolunteerService[] = [
   { id: '1', name: 'Event Management', description: 'Help plan and organize community events.' },
   { id: '2', name: 'Green Initiative', description: 'Participate in gardening and cleanliness drives.' },
   { id: '3', name: 'Teaching & Mentoring', description: 'Tutor children or mentor young adults.' },
-  { id: '4', name: 'Emergency Response', description: 'Be a part of the emergency response team.' },
+  { id: '4
+', name: 'Emergency Response', description: 'Be a part of the emergency response team.' },
   { id: '5', name: 'Community Patrol', description: 'Assist in neighborhood watch programs.' },
 ];

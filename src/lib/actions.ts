@@ -1,34 +1,19 @@
 'use server';
 import { revalidatePath } from 'next/cache';
-import { collection, addDoc } from "firebase/firestore"; 
+import { collection, addDoc, doc, updateDoc } from "firebase/firestore"; 
 import { db } from '@/firebase/config';
-import fs from 'fs/promises';
-import path from 'path';
-import { residents as currentResidents, getEvents, getAnnouncements, emergencyContacts, volunteerServices, getResidentByPhone } from './data';
+import { getResidentByPhone } from './data';
 import type { Resident, Event, Announcement } from './types';
 
 
 export async function updateResident(id: string, data: Partial<{ name: string; flatNo: string; avatar?: string }>) {
   try {
-    const residentIndex = currentResidents.findIndex(res => res.id === id);
-    if (residentIndex === -1) {
-      return { success: false, error: 'Resident not found' };
-    }
-
-    const updatedResident = { ...currentResidents[residentIndex], ...data };
-    const updatedResidents = [...currentResidents];
-    updatedResidents[residentIndex] = updatedResident;
-
-    const residentsString = `let residents: Resident[] = ${JSON.stringify(updatedResidents, null, 2)};`;
-    const dataPath = path.join(process.cwd(), 'src', 'lib', 'data.ts');
-    let fileContent = await fs.readFile(dataPath, 'utf8');
-    fileContent = fileContent.replace(/let residents: Resident\[\] = \[[\s\S]*?\];/, residentsString);
-    await fs.writeFile(dataPath, fileContent, 'utf8');
-
+    const residentDoc = doc(db, "residents", id);
+    await updateDoc(residentDoc, data);
     revalidatePath('/profile/edit');
     return { success: true };
   } catch (error: any) {
-    console.error("Error updating resident in file: ", error);
+    console.error("Error updating resident in Firestore: ", error);
     return { success: false, error: error.message };
   }
 }

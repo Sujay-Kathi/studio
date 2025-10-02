@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import {
   Card,
   CardContent,
@@ -21,6 +20,7 @@ import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import type { Announcement, Event } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import EventMedia from '@/components/EventMedia';
 
 export default function HomePage() {
   const [upcomingEvent, setUpcomingEvent] = useState<Event | null>(null);
@@ -56,13 +56,11 @@ export default function HomePage() {
           <Link href={`/events/${upcomingEvent.id}`} className="col-span-1 sm:col-span-2">
             <Card className="h-full transform-gpu overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
                <div className="relative h-40 w-full">
-                <Image
-                  src={upcomingEvent.image}
+                <EventMedia
+                  mediaUrl={upcomingEvent.mediaUrl}
+                  mediaType={upcomingEvent.mediaType}
                   alt={upcomingEvent.title}
-                  fill
-                  className="object-cover"
-                  data-ai-hint={upcomingEvent.imageHint}
-                  priority
+                  className="object-cover w-full h-full"
                 />
               </div>
               <CardHeader>
@@ -117,13 +115,11 @@ export default function HomePage() {
           <Link href={`/announcements/${latestAnnouncement.id}`} className="col-span-1 sm:col-span-2">
              <Card className="h-full transform-gpu overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
                <div className="relative h-40 w-full">
-                <Image
-                  src={latestAnnouncement.image}
+                <EventMedia
+                  mediaUrl={latestAnnouncement.mediaUrl}
+                  mediaType={latestAnnouncement.mediaType}
                   alt={latestAnnouncement.title}
-                  fill
-                  className="object-cover"
-                  data-ai-hint={latestAnnouncement.imageHint}
-                  priority
+                  className="object-cover w-full h-full"
                 />
               </div>
               <CardHeader>

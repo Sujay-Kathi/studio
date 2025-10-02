@@ -18,12 +18,10 @@ export async function updateResident(id: string, data: Partial<{ name: string; f
   }
 }
 
-export async function addEvent(eventData: Omit<Event, 'id' | 'image' | 'imageHint' | 'participants'>) {
+export async function addEvent(eventData: Omit<Event, 'id' | 'participants'>) {
   try {
     const newEvent = {
       ...eventData,
-      image: `https://picsum.photos/seed/${Math.random()}/800/600`,
-      imageHint: 'new event',
       participants: 0,
     };
     const docRef = await addDoc(collection(db, "events"), newEvent);
@@ -34,13 +32,11 @@ export async function addEvent(eventData: Omit<Event, 'id' | 'image' | 'imageHin
   }
 }
 
-export async function addAnnouncement(announcementData: Omit<Announcement, 'id'| 'date' | 'image' | 'imageHint'>) {
+export async function addAnnouncement(announcementData: Omit<Announcement, 'id'| 'date'>) {
     try {
         const newAnnouncement = {
             ...announcementData,
             date: new Date().toISOString(),
-            image: announcementData.image || `https://picsum.photos/seed/announcement-${Math.random()}/800/600`,
-            imageHint: 'new announcement',
         };
         const docRef = await addDoc(collection(db, "announcements"), newAnnouncement);
         return { success: true, announcementId: docRef.id };

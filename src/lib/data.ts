@@ -1,6 +1,4 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore, collection, getDocs, doc, getDoc, query, where } from "firebase/firestore";
-import { getAuth } from 'firebase/auth';
 import type { Event, Announcement, EmergencyContact, VolunteerService, Resident } from './types';
 import { Shield, Siren, Ambulance, Wrench } from 'lucide-react';
 import { db } from '@/firebase/config';
@@ -96,7 +94,6 @@ export const volunteerServices: VolunteerService[] = [
   { id: '1', name: 'Event Management', description: 'Help plan and organize community events.' },
   { id: '2', name: 'Green Initiative', description: 'Participate in gardening and cleanliness drives.' },
   { id: '3', name: 'Teaching & Mentoring', description: 'Tutor children or mentor young adults.' },
-  { id: '4
-', name: 'Emergency Response', description: 'Be a part of the emergency response team.' },
+  { id: '4', name: 'Emergency Response', description: 'Be a part of the emergency response team.' },
   { id: '5', name: 'Community Patrol', description: 'Assist in neighborhood watch programs.' },
 ];

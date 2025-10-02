@@ -198,7 +198,7 @@ export function CreateEventForm() {
               )}
             />
             
-            <EventPosterGenerator eventTitle={title} eventDescription={description} />
+            {title && description && <EventPosterGenerator eventTitle={title} eventDescription={description} />}
 
             <FormField
               control={form.control}

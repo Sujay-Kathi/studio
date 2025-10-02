@@ -1,7 +1,8 @@
 import { getFirestore, collection, getDocs, doc, getDoc, query, where } from "firebase/firestore";
-import type { Event, Announcement, EmergencyContact, VolunteerService } from './types';
+import type { Event, Announcement, EmergencyContact, VolunteerService, Resident } from './types';
 import { Shield, Siren, Ambulance, Wrench } from 'lucide-react';
 import { db } from '@/firebase/config';
+import { RESIDENTS } from './resident_data';
 
 // --- Data Access Functions ---
 
@@ -9,7 +10,15 @@ export async function getEvents(): Promise<Event[]> {
   try {
     const eventsCol = collection(db, 'events');
     const eventSnapshot = await getDocs(eventsCol);
-    const events = eventSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Event));
+    const events = eventSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+            id: doc.id,
+            ...data,
+            requirements: data.requirements ? data.requirements.split(',').map((r: string) => r.trim()) : [],
+            benefits: data.benefits ? data.benefits.split(',').map((b: string) => b.trim()) : [],
+        } as Event;
+    });
     // Sort events by date in ascending order
     const sortedEvents = events.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     return sortedEvents;
@@ -24,7 +33,13 @@ export async function getEventById(id: string): Promise<Event | undefined> {
     const eventDoc = doc(db, 'events', id);
     const eventSnapshot = await getDoc(eventDoc);
     if (eventSnapshot.exists()) {
-      return { id: eventSnapshot.id, ...eventSnapshot.data() } as Event;
+        const data = eventSnapshot.data();
+        return {
+            id: eventSnapshot.id,
+            ...data,
+            requirements: data.requirements ? data.requirements.split(',').map((r: string) => r.trim()) : [],
+            benefits: data.benefits ? data.benefits.split(',').map((b: string) => b.trim()) : [],
+        } as Event;
     } else {
       return undefined;
     }
@@ -62,6 +77,16 @@ export async function getAnnouncementById(id: string): Promise<Announcement | un
     return undefined;
   }
 }
+
+export async function getResidentByPhone(phone: string): Promise<Resident | undefined> {
+    try {
+      const resident = RESIDENTS.find(r => r.phone === phone);
+      return resident;
+    } catch (error) {
+      console.error("Error fetching resident by phone: ", error);
+      return undefined;
+    }
+  }
 
 // --- Static Data ---
 

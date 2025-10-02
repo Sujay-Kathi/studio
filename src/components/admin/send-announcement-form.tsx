@@ -61,7 +61,8 @@ export function SendAnnouncementForm() {
         title: data.title,
         content: data.content,
         author: data.author,
-        image: data.imageUrl,
+        image: data.imageUrl || '',
+        imageHint: data.title,
         timing: {
           ...(data.eta && { eta: data.eta }),
           ...(data.from && { from: data.from }),
@@ -69,7 +70,7 @@ export function SendAnnouncementForm() {
         }
       };
 
-      const result = await addAnnouncement(announcementData);
+      const result = await addAnnouncement(announcementData as any);
 
        if (result.success) {
         toast({

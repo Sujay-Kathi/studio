@@ -1,6 +1,11 @@
 import type { LucideIcon } from "lucide-react";
 
-export type Screen = 'Home' | 'Events' | 'Announcements' | 'Emergency' | 'Profile' | 'Volunteer' | 'Admin' | 'Event Details' | 'Announcement Details';
+export type Screen = 'Home' | 'Events' | 'Announcements' | 'Emergency' | 'Profile' | 'Volunteer' | 'Admin' | 'Event Details' | 'Announcement Details' | 'Dashboard' | 'Community Events' | 'Emergency Directory' | 'Edit Profile' | 'Admin Panel' | 'Rajsri SPARK' | 'Volunteer Profile';
+
+export type PageProps = {
+    params: { [key: string]: string | string[] | undefined } | undefined;
+    searchParams: { [key: string]: string | string[] | undefined } | undefined;
+  };
 
 export interface Event {
   id: string;
@@ -13,8 +18,8 @@ export interface Event {
   imageHint: string;
   priority: 'high' | 'normal';
   type: 'DRIVE' | 'WORKSHOP' | 'CELEBRATION' | 'MEETUP' | 'SPORTS';
-  requirements: string;
-  benefits: string;
+  requirements: string[];
+  benefits: string[];
   participants: number;
   capacity: number;
   mediaUrl?: string;

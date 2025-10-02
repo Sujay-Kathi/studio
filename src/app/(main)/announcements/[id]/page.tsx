@@ -6,10 +6,6 @@ import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import type { Announcement } from '@/lib/types';
 
-type AnnouncementDetailPageProps = {
-  params: { id: string };
-};
-
 const TimingInfo = ({ timing }: { timing: NonNullable<Announcement['timing']> }) => {
     if (timing.eta) {
         return <Badge variant="outline">ETA: {timing.eta}</Badge>;
@@ -20,7 +16,7 @@ const TimingInfo = ({ timing }: { timing: NonNullable<Announcement['timing']> })
     return null;
 }
 
-export default async function AnnouncementDetailPage({ params }: AnnouncementDetailPageProps) {
+export default async function AnnouncementDetailPage({ params }: any) {
   const announcement = await getAnnouncementById(params.id);
 
   if (!announcement) {

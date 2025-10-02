@@ -57,8 +57,8 @@ export default function HomePage() {
             <Card className="h-full transform-gpu overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
                <div className="relative h-40 w-full">
                 <EventMedia
-                  mediaUrl={upcomingEvent.mediaUrl}
-                  mediaType={upcomingEvent.mediaType}
+                  mediaUrl={upcomingEvent.mediaUrl || upcomingEvent.image}
+                  mediaType={upcomingEvent.mediaType || 'image'}
                   alt={upcomingEvent.title}
                   className="object-cover w-full h-full"
                 />
@@ -116,8 +116,8 @@ export default function HomePage() {
              <Card className="h-full transform-gpu overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
                <div className="relative h-40 w-full">
                 <EventMedia
-                  mediaUrl={latestAnnouncement.mediaUrl}
-                  mediaType={latestAnnouncement.mediaType}
+                  mediaUrl={latestAnnouncement.image}
+                  mediaType={'image'}
                   alt={latestAnnouncement.title}
                   className="object-cover w-full h-full"
                 />

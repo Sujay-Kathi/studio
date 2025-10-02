@@ -1,19 +1,26 @@
-import { getFirestore, collection, getDocs, doc, getDoc, query, where } from "firebase/firestore";
-import type { Resident } from './types';
-import { db } from '@/firebase/config';
+import { Resident } from './types';
 
-export async function getResidentByPhone(phone: string): Promise<Resident | undefined> {
-    try {
-        const residentsCol = collection(db, 'residents');
-        const q = query(residentsCol, where("phone", "==", phone));
-        const querySnapshot = await getDocs(q);
-        if (!querySnapshot.empty) {
-            const residentDoc = querySnapshot.docs[0];
-            return { id: residentDoc.id, ...residentDoc.data() } as Resident;
-        }
-        return undefined;
-    } catch (error) {
-        console.error("Error fetching resident by phone from Firestore: ", error);
-        return undefined;
-    }
-}
+export const RESIDENTS: Resident[] = [
+  {
+    id: '1',
+    name: 'John Doe',
+    flatNo: 'A-101',
+    phone: '1234567890',
+    avatar: '/avatars/john-doe.png',
+  },
+  {
+    id: '2',
+    name: 'Jane Smith',
+    flatNo: 'B-203',
+    phone: '0987654321',
+    avatar: '/avatars/jane-smith.png',
+  },
+  {
+    id: '3',
+    name: 'Sujay Kathi',
+    flatNo: 'C-301',
+    phone: '9999999999',
+    avatar: '/avatars/sujay-kathi.png',
+  },
+  // Add more residents as needed
+];

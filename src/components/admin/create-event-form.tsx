@@ -28,6 +28,8 @@ import { addEvent } from '@/lib/actions';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import type { Event } from '@/lib/types';
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from '@/firebase/config';
 
 const eventSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -40,6 +42,7 @@ const eventSchema = z.object({
   requirements: z.string().optional(),
   benefits: z.string().optional(),
   highPriority: z.boolean().default(false),
+  mediaFile: z.any().optional(),
 });
 
 type EventFormValues = z.infer<typeof eventSchema>;
@@ -50,15 +53,15 @@ export function CreateEventForm() {
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventSchema),
     defaultValues: {
-      title: 'Community Yoga Session',
+      title: '',
       date: new Date().toISOString().split('T')[0],
-      time: '07:00',
-      location: 'Park Amphitheater',
-      description: 'Start your Sunday with a refreshing yoga session for all levels.',
+      time: '',
+      location: '',
+      description: '',
       type: 'WORKSHOP',
-      capacity: 50,
-      requirements: 'Yoga Mat, Water Bottle',
-      benefits: 'Free snacks, Certificate',
+      capacity: 0,
+      requirements: '',
+      benefits: '',
       highPriority: false,
     },
   });
@@ -68,13 +71,30 @@ export function CreateEventForm() {
   async function onSubmit(data: EventFormValues) {
     setIsSubmitting(true);
     try {
+      let mediaUrl = '';
+      let mediaType: 'image' | 'video' | undefined = undefined;
+
+      if (data.mediaFile && data.mediaFile.length > 0) {
+        const file = data.mediaFile[0];
+        mediaType = file.type.startsWith('image/') ? 'image' : 'video';
+        const storageRef = ref(storage, `events-media/${Date.now()}_${file.name}`);
+        
+        await uploadBytes(storageRef, file);
+        mediaUrl = await getDownloadURL(storageRef);
+      }
+
+      const { highPriority, mediaFile, ...restOfData } = data;
       const eventData = {
-        ...data,
-        priority: data.highPriority ? 'high' : 'normal',
-        requirements: data.requirements ? data.requirements.split(',').map(s => s.trim()) : [],
-        benefits: data.benefits ? data.benefits.split(',').map(s => s.trim()) : [],
+        ...restOfData,
+        priority: highPriority ? 'high' : 'normal',
+        requirements: data.requirements || '',
+        benefits: data.benefits || '',
+        mediaUrl,
+        mediaType,
       };
+
       const result = await addEvent(eventData as any);
+
       if (result.success) {
         toast({
           title: 'Event Created!',
@@ -179,6 +199,20 @@ export function CreateEventForm() {
             />
             
             <EventPosterGenerator eventTitle={title} eventDescription={description} />
+
+            <FormField
+              control={form.control}
+              name="mediaFile"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cover Media</FormLabel>
+                  <FormControl>
+                    <Input type="file" accept="image/*,video/*" onChange={(e) => field.onChange(e.target.files)} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             
             <div className="grid grid-cols-2 gap-4">
                <FormField

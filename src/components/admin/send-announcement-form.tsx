@@ -61,6 +61,7 @@ export function SendAnnouncementForm() {
         title: data.title,
         content: data.content,
         author: data.author,
+        image: data.imageUrl,
         timing: {
           ...(data.eta && { eta: data.eta }),
           ...(data.from && { from: data.from }),

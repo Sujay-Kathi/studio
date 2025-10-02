@@ -13,10 +13,12 @@ export interface Event {
   imageHint: string;
   priority: 'high' | 'normal';
   type: 'DRIVE' | 'WORKSHOP' | 'CELEBRATION' | 'MEETUP' | 'SPORTS';
-  requirements: string[];
-  benefits: string[];
+  requirements: string;
+  benefits: string;
   participants: number;
   capacity: number;
+  mediaUrl?: string;
+  mediaType?: 'image' | 'video';
 }
 
 export interface Announcement {

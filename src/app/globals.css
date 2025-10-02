@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .card {
+    @apply border border-primary/40;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 97.3%;

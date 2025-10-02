@@ -29,18 +29,28 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
   return (
     <div className="pb-8">
       <div className="relative h-60 w-full">
-        <Image
-          src={event.image}
-          alt={event.title}
-          fill
-          className="object-cover"
-          data-ai-hint={event.imageHint}
-        />
+        {event.mediaType === 'video' && event.mediaUrl ? (
+          <video
+            src={event.mediaUrl}
+            autoPlay
+            muted
+            loop
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <Image
+            src={event.image}
+            alt={event.title}
+            fill
+            className="object-cover"
+            data-ai-hint={event.imageHint}
+          />
+        )}
         <div className="absolute inset-0 bg-black/30" />
       </div>
 
       <div className="p-4 space-y-6">
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-6">
           {event.priority === 'high' && (
             <Badge className="red-gradient border-none">HIGH PRIORITY</Badge>
           )}
@@ -50,7 +60,7 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
         <h1 className="font-headline text-3xl font-bold">{event.title}</h1>
 
         <div className="space-y-2 text-muted-foreground">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-6">
             <Calendar className="h-5 w-5 text-primary" />
             <span>{format(new Date(event.date), 'EEEE, MMMM d, yyyy')}</span>
           </div>

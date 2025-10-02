@@ -47,7 +47,7 @@ export default function HomePage() {
         <p className="text-muted-foreground">Your community at a glance.</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         {loading ? (
            <div className="col-span-1 sm:col-span-2">
              <Skeleton className="h-48 w-full rounded-lg" />

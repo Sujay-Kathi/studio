@@ -14,18 +14,28 @@ export default async function EventsPage() {
   const sortedEvents = await getEvents();
   
   return (
-    <div className="p-4 space-y-4">
+    <div className="p-4 space-y-8">
       {sortedEvents.map((event) => (
         <Link key={event.id} href={`/events/${event.id}`}>
-          <Card className="overflow-hidden transition-all duration-300 hover:shadow-xl">
+          <Card className="overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
             <div className="relative h-40 w-full">
-              <Image
-                src={event.image}
-                alt={event.title}
-                fill
-                className="object-cover"
-                data-ai-hint={event.imageHint}
-              />
+              {event.mediaType === 'video' && event.mediaUrl ? (
+                <video
+                  src={event.mediaUrl}
+                  autoPlay
+                  muted
+                  loop
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <Image
+                  src={event.image}
+                  alt={event.title}
+                  fill
+                  className="object-cover"
+                  data-ai-hint={event.imageHint}
+                />
+              )}
             </div>
             <CardHeader>
               <CardTitle className="font-headline text-xl">{event.title}</CardTitle>

@@ -30,7 +30,7 @@ export default function AdminPage() {
   return (
     <div className="p-4">
       <Tabs defaultValue="create-event">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-2 gap-4">
           <TabsTrigger value="create-event">Create Event</TabsTrigger>
           <TabsTrigger value="send-announcement">Send Announcement</TabsTrigger>
         </TabsList>

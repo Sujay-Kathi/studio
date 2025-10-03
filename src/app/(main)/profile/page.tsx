@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronRight, UserCog, ShieldAlert, LogOut, Edit } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useAuth } from '@/context/auth-context';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,26 +17,18 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { useRouter } from 'next/navigation';
+import { auth } from '@/firebase/config';
 
 export default function ProfilePage() {
-  const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
+  const { userData } = useAuth();
+  const isAdmin = userData?.role === 'admin';
 
-  useEffect(() => {
-    // This check ensures that the code only runs on the client-side,
-    // where localStorage is available.
-    const isAdminLoggedIn = localStorage.getItem('isAdminLoggedIn') === 'true';
-    setIsAdmin(isAdminLoggedIn);
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('isAdminLoggedIn');
-    localStorage.removeItem('userName');
-    localStorage.removeItem('userFlatNo');
-    localStorage.removeItem('userPhone');
-    localStorage.removeItem('userAvatar');
-    router.replace('/');
+  const handleLogout = async () => {
+    await auth.signOut();
+    // Clear any lingering local storage just in case
+    localStorage.clear();
+    router.replace('/login');
   };
 
   return (

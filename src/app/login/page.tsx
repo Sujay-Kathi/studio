@@ -7,8 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { getResidentByPhone } from '@/lib/data';
 import { Loader2 } from 'lucide-react';
+import { residents } from '@/lib/residents';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,18 +19,15 @@ export default function LoginPage() {
   const handleUserLogin = async () => {
     setIsLoading(true);
     try {
-      const resident = await getResidentByPhone(phone.trim());
+      const resident = residents.find(r => r.phone === phone.trim());
       if (resident) {
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('userId', resident.id);
         localStorage.setItem('userName', resident.name);
         localStorage.setItem('userFlatNo', resident.flatNo);
         localStorage.setItem('userPhone', resident.phone);
-        if (resident.avatar) {
-          localStorage.setItem('userAvatar', resident.avatar);
-        } else {
-          localStorage.removeItem('userAvatar');
-        }
+        // The static residents file does not contain an avatar, so we remove any old one.
+        localStorage.removeItem('userAvatar');
         router.replace('/home');
       } else {
         toast({

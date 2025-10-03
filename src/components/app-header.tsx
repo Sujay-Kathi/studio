@@ -15,6 +15,16 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useEffect, useState } from 'react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import Link from 'next/link';
 
 export default function AppHeader() {
@@ -25,6 +35,7 @@ export default function AppHeader() {
   const [userPhone, setUserPhone] = useState<string | null>(null);
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const [userInitial, setUserInitial] = useState('');
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
@@ -90,57 +101,79 @@ export default function AppHeader() {
   ].includes(pathname);
 
   return (
-    <header className="fixed top-0 z-50 w-full max-w-md border-b bg-background/80 backdrop-blur-sm">
-      <div className="flex h-16 items-center px-4">
-        <div className="flex w-1/4 justify-start">
-          {showBack ? (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => router.back()}
-              aria-label="Go back"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-          ) : (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Avatar className="h-9 w-9 cursor-pointer border-2 border-primary/50">
-                  <AvatarImage src={userAvatar || undefined} alt="User avatar" />
-                  <AvatarFallback>{userInitial || <User />}</AvatarFallback>
-                </Avatar>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <DropdownMenuLabel>
-                  <Link href="/profile/edit" className="flex items-center gap-2">
-                    <UserCog className="h-4 w-4" />
-                    <span>My Account</span>
-                  </Link>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem disabled>{userName || 'Resident'}</DropdownMenuItem>
-                <DropdownMenuItem disabled>
-                  {userFlatNo ? `Flat no: ${userFlatNo}`: 'Flat No. not found'}
-                </DropdownMenuItem>
-                <DropdownMenuItem disabled>
-                  {userPhone ? `Phone: ${userPhone}`: 'Phone No. not found'}
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
-                  <LogOut className="h-4 w-4" />
-                  <span>Log Out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+    <>
+      <header className="fixed top-0 z-50 w-full max-w-md border-b bg-background/80 backdrop-blur-sm">
+        <div className="flex h-16 items-center px-4">
+          <div className="flex w-1/4 justify-start">
+            {showBack ? (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => router.back()}
+                aria-label="Go back"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+            ) : (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Avatar className="h-9 w-9 cursor-pointer border-2 border-primary/50">
+                    <AvatarImage src={userAvatar || undefined} alt="User avatar" />
+                    <AvatarFallback>{userInitial || <User />}</AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuLabel>
+                    <Link href="/profile/edit" className="flex items-center gap-2">
+                      <UserCog className="h-4 w-4" />
+                      <span>My Account</span>
+                    </Link>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem disabled>{userName || 'Resident'}</DropdownMenuItem>
+                  <DropdownMenuItem disabled>
+                    {userFlatNo ? `Flat no: ${userFlatNo}`: 'Flat No. not found'}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem disabled>
+                    {userPhone ? `Phone: ${userPhone}`: 'Phone No. not found'}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      setShowLogoutConfirm(true);
+                    }}
+                    className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Log Out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
+          <div className="w-1/2 text-center">
+            <h1 className="truncate font-headline text-lg font-bold">{title}</h1>
+          </div>
+          <div className="flex w-1/4 justify-end">
+            <ThemeToggle />
+          </div>
         </div>
-        <div className="w-1/2 text-center">
-          <h1 className="truncate font-headline text-lg font-bold">{title}</h1>
-        </div>
-        <div className="flex w-1/4 justify-end">
-          <ThemeToggle />
-        </div>
-      </div>
-    </header>
+      </header>
+      <AlertDialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to log out?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You will be returned to the login screen.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleLogout} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Log Out</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }

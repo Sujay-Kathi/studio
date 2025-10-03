@@ -16,7 +16,7 @@ const TimingInfo = ({ timing }: { timing: NonNullable<Announcement['timing']> })
     return null;
 }
 
-export default async function AnnouncementDetailPage({ params }: any) {
+export default async function AnnouncementDetailPage({ params }: { params: { id: string } }) {
   const announcement = await getAnnouncementById(params.id);
 
   if (!announcement) {

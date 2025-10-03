@@ -13,7 +13,7 @@ import {
 import { format } from 'date-fns';
 import { EventActions } from '@/components/event-actions';
 
-export default async function EventDetailPage({ params }: any) {
+export default async function EventDetailPage({ params }: { params: { id: string } }) {
   const event = await getEventById(params.id);
 
   if (!event) {

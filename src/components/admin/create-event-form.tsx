@@ -31,16 +31,6 @@ import type { Event } from '@/lib/types';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from '@/firebase/config';
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ACCEPTED_MEDIA_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp", "video/mp4", "video/quicktime"];
-
-const fileSchema = z.instanceof(FileList).refine(files => files?.length == 1, 'Cover media is required.')
-  .refine(files => files?.[0]?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
-  .refine(
-    files => ACCEPTED_MEDIA_TYPES.includes(files?.[0]?.type),
-    ".jpg, .jpeg, .png, .webp, .mp4, and .mov files are accepted."
-  );
-
 const eventSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
   date: z.string().min(1, 'Date is required'),
@@ -52,7 +42,7 @@ const eventSchema = z.object({
   requirements: z.string().optional(),
   benefits: z.string().optional(),
   highPriority: z.boolean().default(false),
-  mediaFile: z.any().refine(files => files?.length > 0, 'Cover media is required.'), // Use z.any() for react-hook-form and refine
+  mediaFile: z.any().optional(),
 });
 
 type EventFormValues = z.infer<typeof eventSchema>;
@@ -84,7 +74,7 @@ export function CreateEventForm() {
       let mediaUrl = '';
       let mediaType: 'image' | 'video' | undefined = undefined;
 
-      if (data.mediaFile && data.mediaFile.length > 0) { // This check is now more for safety
+      if (data.mediaFile && data.mediaFile.length > 0) {
         const file: File = data.mediaFile[0];
         mediaType = file.type.startsWith('image/') ? 'image' : 'video';
         const storageRef = ref(storage, `events-media/${Date.now()}_${file.name}`);
@@ -220,7 +210,7 @@ export function CreateEventForm() {
                     <Input 
                       type="file" 
                       accept="image/*,video/*" 
-                      onChange={(e) => field.onChange(e.target.files && e.target.files.length > 0 ? e.target.files : null)} 
+                      onChange={(e) => field.onChange(e.target.files)} 
                     />
                   </FormControl>
                   <FormMessage />

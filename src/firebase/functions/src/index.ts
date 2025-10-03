@@ -12,6 +12,14 @@
  * firebase functions:config:set google.private_key="-----BEGIN PRIVATE KEY-----\n...your-private-key-content...\n-----END PRIVATE KEY-----\n"
  */
 
+interface Resident {
+  name: string;
+  flatNo: string;
+  phone: string;
+  role?: 'admin' | 'resident';
+  avatarUrl?: string;
+}
+
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import { google } from "googleapis";

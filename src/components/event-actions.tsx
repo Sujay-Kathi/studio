@@ -5,7 +5,7 @@ import type { Event } from '@/lib/types';
 import { format } from 'date-fns';
 import { Bell, CheckCircle, Share2 } from 'lucide-react';
 
-export function EventActions({ event }: { event: Event }) {
+export function EventActions({ event }: { event: Pick<Event, 'id' | 'title' | 'date'> }) {
   const shareOnWhatsApp = () => {
     const text = `Check out this event: ${event.title} on ${format(new Date(event.date), 'PP')}! More details: ${window.location.href}`;
     const url = `https://wa.me/?text=${encodeURIComponent(text)}`;

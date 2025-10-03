@@ -108,7 +108,7 @@ export default async function EventDetailPage({ params }: any) {
           <Progress value={registrationPercentage} />
         </div>
 
-        <EventActions event={event} />
+        <EventActions id={event.id} title={event.title} date={event.date} />
       </div>
     </div>
   );

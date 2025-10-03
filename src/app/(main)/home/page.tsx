@@ -1,4 +1,4 @@
-'use client';
+export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
 import {
@@ -17,28 +17,16 @@ import {
 } from 'lucide-react';
 import { getEvents, getAnnouncements } from '@/lib/data';
 import { format } from 'date-fns';
-import { useEffect, useState } from 'react';
 import type { Announcement, Event } from '@/lib/types';
-import { Skeleton } from '@/components/ui/skeleton';
 import EventMedia from '@/components/EventMedia';
 
-export default function HomePage() {
-  const [upcomingEvent, setUpcomingEvent] = useState<Event | null>(null);
-  const [latestAnnouncement, setLatestAnnouncement] = useState<Announcement | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      const [events, announcements] = await Promise.all([
-        getEvents(),
-        getAnnouncements(),
-      ]);
-      setUpcomingEvent(events[0] || null);
-      setLatestAnnouncement(announcements[0] || null);
-      setLoading(false);
-    }
-    fetchData();
-  }, []);
+export default async function HomePage() {
+  const [events, announcements] = await Promise.all([
+    getEvents(),
+    getAnnouncements(),
+  ]);
+  const upcomingEvent = events[0] || null;
+  const latestAnnouncement = announcements[0] || null;
 
   return (
     <div className="space-y-6 p-4">
@@ -48,11 +36,7 @@ export default function HomePage() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        {loading ? (
-           <div className="col-span-1 sm:col-span-2">
-             <Skeleton className="h-48 w-full rounded-lg" />
-           </div>
-        ) : upcomingEvent && (
+        {upcomingEvent && (
           <Link href={`/events/${upcomingEvent.id}`} className="col-span-1 sm:col-span-2">
             <Card className="h-full transform-gpu overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
                <div className="relative h-40 w-full">
@@ -107,11 +91,7 @@ export default function HomePage() {
           </Card>
         </Link>
         
-        {loading ? (
-            <div className="col-span-1 sm:col-span-2">
-                <Skeleton className="h-48 w-full rounded-lg" />
-            </div>
-        ) : latestAnnouncement && (
+        {latestAnnouncement && (
           <Link href={`/announcements/${latestAnnouncement.id}`} className="col-span-1 sm:col-span-2">
              <Card className="h-full transform-gpu overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
                <div className="relative h-40 w-full">

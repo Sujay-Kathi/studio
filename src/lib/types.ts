@@ -1,11 +1,8 @@
+
 import type { LucideIcon } from "lucide-react";
 
 export type Screen = 'Home' | 'Events' | 'Announcements' | 'Emergency' | 'Profile' | 'Volunteer' | 'Admin' | 'Event Details' | 'Announcement Details' | 'Dashboard' | 'Community Events' | 'Emergency Directory' | 'Edit Profile' | 'Admin Panel' | 'Rajsri SPARK' | 'Volunteer Profile';
 
-export type PageProps = {
-    params: { [key: string]: string | string[] | undefined } | undefined;
-    searchParams: { [key: string]: string | string[] | undefined } | undefined;
-  };
 
 export interface Event {
   id: string;

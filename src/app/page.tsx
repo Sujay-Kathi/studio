@@ -1,34 +1,34 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { SparkIcon } from '@/components/icons';
 import { Loader2 } from 'lucide-react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@/firebase/config';
 
 export default function SplashScreen() {
   const router = useRouter();
 
   useEffect(() => {
-    // This timeout is to ensure the splash screen is visible for a moment.
-    // In a real app, you might be loading data here.
-    const timer = setTimeout(() => {
-      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-      if (isLoggedIn) {
+    // Use Firebase's auth state listener for a reliable check
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      // Add a small delay to prevent screen flicker
+      setTimeout(() => {
+      if (user) {
         router.replace('/home');
       } else {
         router.replace('/login');
       }
-    }, 2000); // Show splash for 2 seconds
-
-    return () => clearTimeout(timer);
-  }, [router]);
+      }, 1000);
+    });
+    return () => unsubscribe();
+  }, [router]); 
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center bg-background">
-      <div className="flex items-center gap-2 font-semibold">
-        <SparkIcon className="h-8 w-8" />
-        <h1 className="text-2xl">Volunteer App</h1>
-      </div>
+      <SparkIcon className="h-12 w-12 text-primary" />
+      <h1 className="mt-4 text-2xl font-headline font-bold">Rajsri SPARK</h1>
       <Loader2 className="mt-4 h-6 w-6 animate-spin" />
     </div>
   );

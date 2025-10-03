@@ -103,6 +103,13 @@ export const onResidentCreate = functions.firestore
 
     await ensureHeaderRow();
 
+    // Idempotency Check: Ensure we don't add a user that already exists.
+    const existingRow = await findRowById(residentId);
+    if (existingRow !== -1) {
+      functions.logger.warn(`Resident ID ${residentId} already exists in sheet at row ${existingRow}. Skipping creation.`);
+      return; // Exit function to prevent duplicate entry
+    }
+
     const values = [[
       residentId,
       residentData.name || "",

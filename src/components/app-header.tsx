@@ -14,67 +14,23 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useAuth } from '@/context/auth-context';
+import { auth } from '@/firebase/config';
 
 export default function AppHeader() {
   const pathname = usePathname();
   const router = useRouter();
-  const [userName, setUserName] = useState<string | null>(null);
-  const [userFlatNo, setUserFlatNo] = useState<string | null>(null);
-  const [userPhone, setUserPhone] = useState<string | null>(null);
-  const [userAvatar, setUserAvatar] = useState<string | null>(null);
-  const [userInitial, setUserInitial] = useState('');
+  const { userData } = useAuth();
 
-  const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('isAdminLoggedIn');
-    localStorage.removeItem('userName');
-    localStorage.removeItem('userFlatNo');
-    localStorage.removeItem('userPhone');
-    localStorage.removeItem('userAvatar');
-    router.replace('/');
+  const handleLogout = async () => {
+    await auth.signOut();
+    // Clear any lingering local storage just in case
+    localStorage.clear();
+    router.replace('/login');
   };
 
-  useEffect(() => {
-    // This function can be called to re-fetch data from localStorage
-    const updateUserData = () => {
-      const name = localStorage.getItem('userName');
-      const flatNo = localStorage.getItem('userFlatNo');
-      const phone = localStorage.getItem('userPhone');
-      const avatar = localStorage.getItem('userAvatar');
-      setUserName(name);
-      setUserFlatNo(flatNo);
-      setUserPhone(phone);
-      setUserAvatar(avatar);
-      if (name) {
-        setUserInitial(name.charAt(0).toUpperCase());
-      }
-    };
-
-    updateUserData();
-
-    // Listen for storage changes to update the header if profile is edited
-    const handleStorageChange = (e: StorageEvent) => {
-       if (e.key === 'userName' || e.key === 'userAvatar') {
-            updateUserData();
-       }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    
-    // Custom event for when profile is updated, since 'storage' event only works across tabs
-    const handleProfileUpdate = () => {
-        updateUserData();
-    };
-    window.addEventListener('profileUpdated', handleProfileUpdate);
-
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('profileUpdated', handleProfileUpdate);
-    };
-  }, [pathname]); // Re-run when path changes to ensure we have fresh data on navigation
+  const userInitial = userData?.name ? userData.name.charAt(0).toUpperCase() : '';
 
   const getTitle = (): Screen => {
     if (pathname === '/home') return 'Dashboard';
@@ -116,8 +72,8 @@ export default function AppHeader() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Avatar className="h-9 w-9 cursor-pointer border-2 border-primary/50">
-                  <AvatarImage src={userAvatar || undefined} alt="User avatar" />
-                  <AvatarFallback>{userInitial || <User />}</AvatarFallback>
+                  <AvatarImage src={userData?.avatarUrl || undefined} alt="User avatar" />
+                  <AvatarFallback>{userInitial || <User className="h-4 w-4"/>}</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
@@ -128,12 +84,12 @@ export default function AppHeader() {
                   </Link>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem disabled>{userName || 'Resident'}</DropdownMenuItem>
+                <DropdownMenuItem disabled>{userData?.name || 'Resident'}</DropdownMenuItem>
                 <DropdownMenuItem disabled>
-                  {userFlatNo ? `Flat no: ${userFlatNo}`: 'Flat No. not found'}
+                  {userData?.flatNo ? `Flat no: ${userData.flatNo}`: 'Flat No. not found'}
                 </DropdownMenuItem>
                 <DropdownMenuItem disabled>
-                  {userPhone ? `Phone: ${userPhone}`: 'Phone No. not found'}
+                  {userData?.phone ? `Phone: ${userData.phone}`: 'Phone No. not found'}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:bg-destructive/10 focus:text-destructive">

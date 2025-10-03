@@ -1,18 +1,19 @@
+'use client';
+
 import AppHeader from '@/components/app-header';
 import BottomNav from '@/components/bottom-nav';
+import { AuthProvider } from '@/context/auth-context';
 
-export default function MainAppLayout({
+export default function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-muted/30 dark:bg-black">
-      <div className="relative mx-auto flex min-h-screen max-w-md flex-col border-x bg-background shadow-2xl">
-        <AppHeader />
-        <main className="flex-1 pb-24 pt-16">{children}</main>
-        <BottomNav />
-      </div>
-    </div>
+    <AuthProvider>
+      <AppHeader />
+      <main className="pt-16 pb-16">{children}</main>
+      <BottomNav />
+    </AuthProvider>
   );
 }

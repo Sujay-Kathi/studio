@@ -13,7 +13,7 @@ import {
 import { format } from 'date-fns';
 import { EventActions } from '@/components/event-actions';
 
-export default async function EventDetailPage({ params }: any) {
+export default async function EventDetailPage({ params }: { params: { id: string } }) {
   const event = await getEventById(params.id);
 
   if (!event) {
@@ -108,7 +108,7 @@ export default async function EventDetailPage({ params }: any) {
           <Progress value={registrationPercentage} />
         </div>
 
-        <EventActions event={event} />
+        <EventActions id={event.id} title={event.title} date={event.date} />
       </div>
     </div>
   );

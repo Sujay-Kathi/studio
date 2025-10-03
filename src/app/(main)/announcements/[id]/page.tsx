@@ -1,10 +1,14 @@
 import { notFound } from 'next/navigation';
-import Image from 'next/image';
 import { getAnnouncementById } from '@/lib/data';
 import { Calendar, Clock, UserCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import type { Announcement } from '@/lib/types';
+import EventMedia from '@/components/EventMedia';
+
+type AnnouncementDetailPageProps = {
+  params: { id: string };
+};
 
 const TimingInfo = ({ timing }: { timing: NonNullable<Announcement['timing']> }) => {
     if (timing.eta) {
@@ -16,7 +20,7 @@ const TimingInfo = ({ timing }: { timing: NonNullable<Announcement['timing']> })
     return null;
 }
 
-export default async function AnnouncementDetailPage({ params }: any) {
+export default async function AnnouncementDetailPage({ params }: AnnouncementDetailPageProps) {
   const announcement = await getAnnouncementById(params.id);
 
   if (!announcement) {
@@ -26,12 +30,11 @@ export default async function AnnouncementDetailPage({ params }: any) {
   return (
     <div>
       <div className="relative h-60 w-full">
-        <Image
-          src={announcement.image}
+        <EventMedia
+          mediaUrl={announcement.mediaUrl}
+          mediaType={announcement.mediaType}
           alt={announcement.title}
-          fill
-          className="object-cover"
-          data-ai-hint={announcement.imageHint}
+          className="object-cover w-full h-full"
         />
          <div className="absolute inset-0 bg-black/30" />
       </div>
